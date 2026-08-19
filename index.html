@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CREATY — Posters graphiques · Kinshasa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html{scroll-behavior:smooth}
+    body{font-family:Arial,sans-serif;background:#0d0d0d}
+    .fd{font-family:'Arial Black',Arial,sans-serif}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    .mq{display:flex;width:max-content;animation:marquee 22s linear infinite}
+    .mq2{animation-duration:36s}
+    .ci{transition:transform .5s cubic-bezier(.25,.46,.45,.94)}
+    .card:hover .ci{transform:scale(1.06)}
+    .rv{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
+    .rv.on{opacity:1;transform:translateY(0)}
+    #cart{transform:translateX(100%);transition:transform .38s cubic-bezier(.25,.46,.45,.94)}
+    #cart.open{transform:translateX(0)}
+    #cBd{opacity:0;transition:opacity .3s;pointer-events:none}
+    #cBd.on{opacity:1;pointer-events:all}
+    #toast{opacity:0;transform:translate(-50%,12px);transition:opacity .3s,transform .3s;pointer-events:none}
+    #toast.on{opacity:1;transform:translate(-50%,0)}
+    #modal{display:none}
+    #modal.on{display:flex}
+    @keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+    #modalBox{animation:popIn .2s ease}
+    .sg>:nth-child(even){margin-top:2rem}
+    @media(min-width:1024px){.sg3>:nth-child(3n+2){margin-top:3rem}.sg3>:nth-child(even){margin-top:0}}
+    ::-webkit-scrollbar{width:3px}
+    ::-webkit-scrollbar-thumb{background:#9be619}
+    button,a{transition:all .2s ease}
+  </style>
+</head>
+<body class="bg-[#0d0d0d] text-[#f5f2ea]">
+
+<div class="overflow-hidden bg-[#9be619] py-2.5">
+  <div class="mq">
+    <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Livraison partout a Kinshasa</span>
+    <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Posters en petite serie</span>
+    <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Paiement a la livraison</span>
+    <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Commandes via WhatsApp</span>
+    <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Livraison partout a Kinshasa</span>
+    <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Posters en petite serie</span>
+    <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Paiement a la livraison</span>
+    <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Commandes via WhatsApp</span>
+  </div>
+</div>
+
+<header class="sticky top-0 z-10 border-b border-white/10 bg-[#0d0d0d]/92 backdrop-blur-md">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
+    <a href="#top" class="fd text-2xl font-black tracking-[-0.12em]">JP CREATY</a>
+    <nav class="hidden gap-8 text-[10px] font-bold uppercase tracking-[.2em] md:flex">
+      <a href="#shop" class="opacity-50 hover:opacity-100">Boutique</a>
+      <a href="#editions" class="opacity-50 hover:opacity-100">Editions</a>
+      <a href="#manifesto" class="opacity-50 hover:opacity-100">Manifeste</a>
+    </nav>
+    <button onclick="toggleCart()" class="relative flex items-center gap-2 border border-white/20 px-3 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:border-[#9be619] hover:text-[#9be619]">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      Mon sac
+      <span id="cartCount" class="hidden min-w-[18px] rounded-full bg-[#9be619] px-1.5 py-0.5 text-center text-[8px] font-black text-[#111]">0</span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="mx-auto grid max-w-7xl min-h-[88vh] items-center gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[1fr_460px] lg:py-24">
+    <div>
+      <p class="rv on mb-7 flex items-center gap-3 text-[9px] font-bold uppercase tracking-[.35em] text-[#9be619]"><span class="h-1.5 w-1.5 rounded-full bg-[#9be619]"></span>Kinshasa · Affiches & Editions 2026</p>
+      <h1 class="rv on fd font-black leading-[.82] tracking-[-0.1em]" style="font-size:clamp(4.5rem,12vw,10.5rem)">POSTERS<br><span style="color:#9be619">SUR <span style="-webkit-text-stroke:2px #9be619;color:transparent">MESURE.</span></span></h1>
+      <p class="rv on mt-8 max-w-sm text-sm leading-relaxed text-white/45" style="transition-delay:.1s">Des affiches manga, musique, football et magazines pour composer un mur unique a Kinshasa.</p>
+      <div class="rv on mt-9 flex flex-wrap items-center gap-5" style="transition-delay:.2s">
+        <a href="#shop" class="inline-flex items-center gap-2 bg-[#9be619] px-7 py-4 text-[10px] font-bold uppercase tracking-[.22em] text-[#111] hover:-translate-y-0.5">Voir la collection <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <span class="text-[9px] font-bold uppercase tracking-[.3em] text-white/25">Drop 2026 · 190+ designs</span>
+      </div>
+    </div>
+    <div class="rv on relative grid grid-cols-2 gap-4" style="transition-delay:.15s">
+      <div class="overflow-hidden border-2 border-[#f5f2ea] shadow-[10px_10px_0_#9be619]" style="transform:rotate(-4.5deg)"><img class="aspect-[3/4] w-full object-cover" loading="lazy" src="https://cdn.builder.io/api/v1/image/assets%2Fb74c85f068184889974c7b9cc8a44185%2Fc506f89dc34941708e856c55d41de648?format=webp&width=600" alt="Poster"></div>
+      <div class="mt-16 overflow-hidden border-2 border-[#f5f2ea]" style="transform:rotate(4deg)"><img class="aspect-[3/4] w-full object-cover" loading="lazy" src="https://cdn.builder.io/api/v1/image/assets%2Fb74c85f068184889974c7b9cc8a44185%2Fe946f929d06449369460dd11db22082f?format=webp&width=600" alt="Poster"></div>
+      <span class="absolute -right-3 -top-4 animate-bounce rounded-full bg-fuchsia-500 px-4 py-5 text-center text-[9px] font-black uppercase leading-tight text-white shadow-lg">NEW<br>DROP</span>
+    </div>
+  </section>
+</main>
+
+<div class="overflow-hidden border-y border-white/10 bg-[#f5f2ea] py-3">
+  <div class="mq mq2">
+    <span class="fd mx-10 text-xs font-black uppercase tracking-[.2em] text-[#111]">Posters manga</span><span class="mx-3 font-black text-[#9be619]">.</span>
+    <span class="fd mx-10 text-xs font-black uppercase tracking-[.2em] text-[#111]">Musique posters</span><span class="mx-3 font-black text-[#9be619]">.</span>
+    <span class="fd mx-10 text-xs font-black uppercase tracking-[.2em] text-[#111]">Football posters</span><span class="mx-3 font-black text-[#9be619]">.</span>
+    <span class="fd mx-10 text-xs font-black uppercase tracking-[.2em] text-[#111]">Magazines</span><span class="mx-3 font-black text-[#9be619]">.</span>
+    <span class="fd mx-10 text-xs font-black uppercase tracking-[.2em] text-[#111]">Posters manga</span><span class="mx-3 font-black text-[#9be619]">.</span>
+    <span class="fd mx-10 text-xs font-black uppercase tracking-[.2em] text-[#111]">Musique posters</span><span class="mx-3 font-black text-[#9be619]">.</span>
+    <span class="fd mx-10 text-xs font-black uppercase tracking-[.2em] text-[#111]">Football posters</span><span class="mx-3 font-black text-[#9be619]">.</span>
+    <span class="fd mx-10 text-xs font-black uppercase tracking-[.2em] text-[#111]">Magazines</span><span class="mx-3 font-black text-[#9be619]">.</span>
+  </div>
+</div>
+
+<section id="shop" class="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:py-28">
+  <div class="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="mb-3 text-[9px] font-bold uppercase tracking-[.35em] text-[#9be619]">Le drop du mois</p>
+      <h2 class="fd font-black leading-[.83] tracking-[-0.08em]" style="font-size:clamp(3rem,8vw,6.5rem)">A ACCROCHER.<br><span class="text-white/25">A GARDER.</span></h2>
+    </div>
+    <p class="text-[9px] font-bold uppercase tracking-[.25em] text-white/30">Selection 2026 · 190+ designs</p>
+  </div>
+  <div id="filters" class="mb-12 flex flex-wrap gap-2"></div>
+  <div id="collections"></div>
+</section>
+
+<section id="editions" class="border-t border-white/10">
+  <div class="mx-auto max-w-7xl bg-fuchsia-600 px-5 py-20 sm:px-8">
+    <div class="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p class="mb-4 text-[9px] font-bold uppercase tracking-[.35em] text-[#9be619]">Les essentiels</p>
+        <h2 class="fd font-black leading-[.83] tracking-[-0.08em] text-[#111]" style="font-size:clamp(3rem,8vw,6rem)">CHAQUE<br>DETAIL<br>COMPTE.</h2>
+      </div>
+      <p class="max-w-xs text-sm leading-relaxed text-[#111]/60">Des tirages soignes, des finitions durables. Chaque affiche est selectionnee pour son impact visuel.</p>
+    </div>
+  </div>
+</section>
+
+<section id="manifesto" class="mx-auto max-w-7xl border-t border-white/10 px-5 py-24 sm:px-8">
+  <div class="max-w-xl">
+    <p class="mb-5 text-[9px] font-bold uppercase tracking-[.35em] text-[#9be619]">CREATY, c'est quoi ?</p>
+    <h2 class="fd font-black leading-[.83] tracking-[-0.09em]" style="font-size:clamp(2.8rem,7vw,5.5rem)">LE MUR<br>EST UNE<br>PAGE BLANCHE.</h2>
+    <p class="mt-8 text-sm leading-relaxed text-white/45">Manga, musique, football, magazine — une bibliotheque visuelle pour tous les murs de Kinshasa. Chaque affiche est un choix esthetique a posseder et contempler.</p>
+  </div>
+</section>
+
+<footer class="border-t border-white/10 bg-[#090909]">
+  <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-5 py-10 sm:px-8">
+    <span class="mr-auto text-xs font-bold text-white/20">2026 JP CREATY — Kinshasa, RDC</span>
+    <a class="border border-[#9be619] px-4 py-2.5 text-[9px] font-bold uppercase tracking-[.2em] text-[#9be619] hover:bg-[#9be619] hover:text-[#111]" href="https://wa.me/243824120177" target="_blank">WhatsApp 824 120 177</a>
+    <a class="border border-[#9be619] px-4 py-2.5 text-[9px] font-bold uppercase tracking-[.2em] text-[#9be619] hover:bg-[#9be619] hover:text-[#111]" href="https://wa.me/243961293567" target="_blank">WhatsApp 961 293 567</a>
+  </div>
+</footer>
+
+<div id="cBd" class="fixed inset-0 z-20 bg-black/60" onclick="toggleCart()"></div>
+
+<aside id="cart" class="fixed inset-y-0 right-0 z-30 flex w-full max-w-sm flex-col bg-[#f5f2ea] text-[#111] shadow-2xl">
+  <div class="flex items-center justify-between border-b border-black/10 px-6 py-5">
+    <h2 class="fd text-2xl font-black tracking-tight">MON SAC <span id="cTotal" class="text-[#9be619]">(0)</span></h2>
+    <button onclick="toggleCart()" class="rounded-full p-1.5 text-2xl leading-none opacity-30 hover:opacity-80">x</button>
+  </div>
+  <div id="cItems" class="flex-1 overflow-y-auto px-6 py-4"></div>
+  <div id="cSummary" class="hidden border-t border-black/10 px-6 py-4">
+    <div class="flex items-center justify-between">
+      <span class="text-[10px] font-bold uppercase tracking-widest text-black/50">Total estime</span>
+      <span id="cTotalPrice" class="fd text-lg font-black text-[#111]">0 FC</span>
+    </div>
+  </div>
+  <div class="border-t border-black/10 px-6 pb-6 pt-4 space-y-3">
+    <a id="cOrder" href="#" class="block bg-[#111] py-4 text-center text-[9px] font-bold uppercase tracking-[.25em] text-white hover:bg-[#9be619] hover:text-[#111]">Commander sur WhatsApp</a>
+    <button onclick="clearCart()" class="block w-full border border-black/15 py-2.5 text-center text-[9px] font-bold uppercase tracking-widest text-black/35 hover:border-black/40 hover:text-black/60">Vider le sac</button>
+  </div>
+</aside>
+
+<div id="modal" class="fixed inset-0 z-40 items-center justify-center bg-black/70 p-4">
+  <div id="modalBox" class="w-full max-w-sm overflow-hidden bg-[#f5f2ea] text-[#111] shadow-2xl">
+    <div class="flex items-start gap-4 border-b border-black/10 p-5">
+      <div class="h-20 w-14 shrink-0 overflow-hidden bg-black/5"><img id="mImg" class="h-full w-full object-cover" src="" alt=""></div>
+      <div class="flex-1 min-w-0">
+        <p class="text-[8px] font-bold uppercase tracking-[.3em] text-black/40 mb-1">Choisir votre format</p>
+        <p id="mName" class="fd text-base font-black leading-tight"></p>
+        <p class="mt-1 text-[9px] text-black/40">Selectionnez la taille souhaitee</p>
+      </div>
+      <button onclick="closeModal()" class="shrink-0 text-xl leading-none text-black/25 hover:text-black/60 mt-0.5">x</button>
+    </div>
+    <div class="p-4 space-y-2.5">
+      <button data-fmt="A2" data-price="2500" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5">
+        <div><p class="fd text-sm font-black">Format A2</p><p class="mt-0.5 text-[9px] text-black/45">42 x 59 cm - Standard</p></div>
+        <span class="fd text-base font-black">2.500 FC</span>
+      </button>
+      <button data-fmt="A3" data-price="5000" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5">
+        <div><p class="fd text-sm font-black">Format A3</p><p class="mt-0.5 text-[9px] text-black/45">30 x 42 cm - Compact</p></div>
+        <span class="fd text-base font-black">5.000 FC</span>
+      </button>
+      <button data-fmt="A1" data-price="10000" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5">
+        <div><p class="fd text-sm font-black">Format A1 <span class="text-[8px] bg-[#9be619] text-[#111] px-1.5 py-0.5 ml-1 font-bold uppercase">Grand</span></p><p class="mt-0.5 text-[9px] text-black/45">59 x 84 cm - Premium</p></div>
+        <span class="fd text-base font-black">10.000 FC</span>
+      </button>
+    </div>
+    <div class="px-4 pb-4"><button onclick="closeModal()" class="w-full border border-black/15 py-3 text-[9px] font-bold uppercase tracking-widest text-black/35 hover:border-black/40">Annuler</button></div>
+  </div>
+</div>
+
+<div id="toast" class="fixed bottom-6 left-1/2 z-50 flex max-w-xs items-center gap-3 bg-[#9be619] px-5 py-3 text-[9px] font-bold uppercase tracking-[.15em] text-[#111] shadow-xl">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastTxt"></span>
+</div>
+
+<script>
+const CDN='https://cdn.builder.io/api/v1/image/assets%2Fb74c85f068184889974c7b9cc8a44185%2F';
+const LP='./images/';
+const INIT=8;
+const DATA={
+  'Posters manga':{num:'01',phone:'243824120177',accent:'manga',
+    items:[
+      {img:CDN+'c506f89dc34941708e856c55d41de648?format=webp&width=600',name:'Poster sur mur'},
+      {img:CDN+'0e17471739a1407a9bdf174d45271ab4?format=webp&width=600',name:'Ghost Signal'},
+      {img:CDN+'e946f929d06449369460dd11db22082f?format=webp&width=600',name:'Manga Vision 03'},
+      {img:CDN+'5a25bf376f3e48f0809bb8cf47511961?format=webp&width=600',name:'Night Riders'},
+      {img:CDN+'4289c0db3c684fd49f76254b93e264ee?format=webp&width=600',name:'Astra Vol 1'},
+      {img:CDN+'9e0b6136d4334fd08de6f4920a92a0c4?format=webp&width=600',name:'Tokyo Frames'},
+      {img:CDN+'7801448b677b41e0b97228ff93b151e5?format=webp&width=600',name:'Soul Archive'},
+      {img:CDN+'40077763d8a5414092bdb5a2b6aae903?format=webp&width=600',name:'Red Eclipse'},
+      {img:CDN+'90899326f157440dbfb476cc5772e4fb?format=webp&width=600',name:'Nier Protocol'},
+      {img:CDN+'146de1571fe94202b55d11605eed5855?format=webp&width=600',name:'Miyamoto'},
+      {img:CDN+'eaa5c15502df4cf4bce67a65f84d862f?format=webp&width=600',name:'Bleach Files'},
+      {img:CDN+'99f06940896548feb427c0273272f2d0?format=webp&width=600',name:'The Emperor'},
+      {img:CDN+'c0525b1ea3994e8dab4f853ae2350ee3?format=webp&width=600',name:'Hero of Shadow'},
+      {img:CDN+'0be3fa1c7f3a453a813c8b8110b52d14?format=webp&width=600',name:'Jujutsu Night'},
+    ],
+    extra:[
+      {img:LP+'00bf3ff8c464f42b5a4cdcf24491373a.jpg',name:'Madara Uchiha'},
+      {img:LP+'0536b7311584a71bb3f521aa602927db.jpg',name:'Soul Eater — Maka'},
+      {img:LP+'0582491bf5080599d71ea49ecf1ee0b6.jpg',name:'Kurapika — HxH'},
+      {img:LP+'067df57b8bbfd3b2de76b20ceac26fe7-copie.jpg',name:'Dandadan'},
+      {img:LP+'085bbc5248c0b6556cd6782ec7e622d2-copie.jpg',name:'Makoto Yuki — Persona 3'},
+      {img:LP+'091bf4b8f04642f8d768dc921849555c.jpg',name:'Bleach — Ichigo'},
+      {img:LP+'123888ebf9bb7fb8d7c5835dc16f9956.jpg',name:'Bakugo — MHA'},
+      {img:LP+'12c3c5086eafbaa0a354b6c9448ac726.jpg',name:'Akaza — Demon Slayer'},
+      {img:LP+'16c89f91a31515f948821484307d2a10.jpg',name:'Monster — Johan'},
+      {img:LP+'287c4a4d69a292b648305195ed4813f4.jpg',name:'Hinata Shoyo — Haikyuu'},
+      {img:LP+'2b3f1cd6c43e10fec07dde3b4d3dd7e2.jpg',name:'Nijiku Zanka'},
+      {img:LP+'30043c4917b84aa453dab82394809abe.jpg',name:'Soul Eater — Resonance'},
+      {img:LP+'3cb7156835b853cc5aeb9d6b6638138a.jpg',name:'Calamities Hunters'},
+      {img:LP+'4288fbc7062dffc0bc44b8129d41adcd.jpg',name:'Vinland Saga — Thorfinn'},
+      {img:LP+'5949183c32bfa3bd72ca29fd7289eb56.jpg',name:'Dan Heng — Star Rail'},
+      {img:LP+'5f91a7f2a50d54f188a8c1f9ff67cc10.jpg',name:'Bulletproof Aesthetics'},
+      {img:LP+'6404f15f34288a3fed390b6d9f801d17.jpg',name:'Chopper — One Piece'},
+      {img:LP+'6c33214048b24f3a7ef184083e9ea25b.jpg',name:'Unohana — Bleach'},
+      {img:LP+'6e2190fbd34e9a8af982a598f07a09bc-copie.jpg',name:'Yukari Takeba — Persona 3'},
+      {img:LP+'71c2844658b4b33ba7fc6a91ef45e164.jpg',name:'Delicious in Dungeon'},
+      {img:LP+'74a36ad7352833046c665b3a217204ac.jpg',name:'Denji — Chainsaw Man'},
+      {img:LP+'7d09d66f65a6379c28e96a874ed5bcaa.jpg',name:'Rudo Surebrec'},
+      {img:LP+'7d8b584ede9aa330669a762615bae886.jpg',name:'Berserk — Guts'},
+      {img:LP+'7fcf16d377195306bdc2ff538975bdcf-copie.jpg',name:'Yor Forger — Spy x Family'},
+      {img:LP+'86080fe122e7c608954e84af2b84accb.jpg',name:'Ubel — Frieren'},
+      {img:LP+'8a6cd4ef3e57d53bc2cea0aee1ecc026.jpg',name:'Perfect Blue'},
+      {img:LP+'8c42bf081b1adb89a3f7b2f2b1c9814b-copie.jpg',name:'Joker — Persona 5'},
+      {img:LP+'919d979be6ecd1386928ff807e669a9c.jpg',name:'Retsu Unohana — Bleach'},
+      {img:LP+'93d792bde274446247b339cf7af1c8d4.jpg',name:'Monster — Docteur Tenma'},
+      {img:LP+'988f5a182f1b7dcb1bc1d8a0307866bd.jpg',name:'Naruto Uzumaki'},
+      {img:LP+'9a75ec502491a4485cf81ebfdc11ce2e.jpg',name:'Rise Kujikawa — Persona 4'},
+      {img:LP+'9c441c6f2545252b91a035f3504e7afb.jpg',name:'Itachi Uchiha'},
+      {img:LP+'a13c82a858aa4ca84a3d2bc64c22625b.jpg',name:'Vinland Saga — No Enemies'},
+      {img:LP+'a21451131de39644e5fb3cbc200d278e.jpg',name:'Subaru Natsuki — Re:Zero'},
+      {img:LP+'a52c5651c2436114992bc17442c10144.jpg',name:'Makima — Chainsaw Man'},
+      {img:LP+'af613da13fe6847120ced0380c04c8bf.jpg',name:'Kira Yoshikage — JoJo'},
+      {img:LP+'b432622ea25f63ae2c0f3f699ce93450.jpg',name:'Makima Dark — Chainsaw Man'},
+      {img:LP+'ce47d197969d5d31d73881720e68f254.jpg',name:'Rengoku — Demon Slayer'},
+      {img:LP+'d068d8b4c5a41b826312a6df6495420d.jpg',name:'Okkotsu Yuta — JJK'},
+      {img:LP+'d21d9a3a648f46f0970e6a3664a390c5.jpg',name:'Ruan Mei — Star Rail'},
+      {img:LP+'d56740eb1e5580fd0861dddb33289a34.jpg',name:'Solo Leveling — Sung Jinwoo'},
+      {img:LP+'da5b52b6d776054e0d7c9177843b7ee2.jpg',name:'Aki Hayakawa — Chainsaw Man'},
+      {img:LP+'e1d10f2ec0823c723f4b6c586022fcbd.jpg',name:'Hashira — Demon Slayer'},
+      {img:LP+'e27432c1bf4eccbf38d189b4d67a3877.jpg',name:'Rin — Blue Lock'},
+      {img:LP+'e35df7fc080adb5de24dc89b9f07f977.jpg',name:'Edward Elric — FMA'},
+      {img:LP+'e83307677d72998786b2a78d868604cf-copie.jpg',name:'Yook Seongji — Drown'},
+      {img:LP+'e93de645d19388f70c9a59f8a36e77af.jpg',name:'Soul Eater — Crona'},
+      {img:LP+'ecbfde7ca10cf861a606830e421df28b.jpg',name:'Mikasa Ackerman — AoT'},
+      {img:LP+'eebfe11f1f42d2ac643f52ba29916ac6.jpg',name:'Kirito — Sword Art Online'},
+      {img:LP+'efc8ad234f9b5f6536541fdf1bd91e15.jpg',name:'Frieren the Slayer'},
+    ]
+  },
+  'Musique posters':{num:'02',phone:'243961293567',accent:'music',
+    items:[
+      {img:CDN+'bf77fad8311b4bca9cff85f7b6f8d98d?format=webp&width=600',name:'Billie Eilish'},
+      {img:CDN+'fd0390c5676443388681b364044a06de?format=webp&width=600',name:'Eminem'},
+      {img:CDN+'4bcbad2aa9cd43188372ddcbbbf08be8?format=webp&width=600',name:'Tyler The Creator'},
+      {img:CDN+'e967877b4f9e4c539e90ed3d3c03e43b?format=webp&width=600',name:'Kendrick Lamar'},
+      {img:CDN+'67d62eb78b3b41deb3d89f58366938ba?format=webp&width=600',name:'ASAP Rocky'},
+      {img:CDN+'bddd7437620340e09b3a92dd8d6ba112?format=webp&width=600',name:'Dazed'},
+      {img:CDN+'ba0e030d1d994ecf908fd5724f825573?format=webp&width=600',name:'Jung Typographic'},
+      {img:CDN+'33a38df778794c89b66227f2a7ec5e0e?format=webp&width=600',name:'Luis Poster'},
+    ],
+    extra:[
+      {img:LP+'007fb80d207d6b42341997134fde4f72.jpg',name:'Central Cee'},
+      {img:LP+'00d3eb52077c2fa232146d8f426bc0cb.jpg',name:'Metro Boomin — Spider-Verse'},
+      {img:LP+'0142070a5db2bb9b577e35b738688796.jpg',name:'Beabadoobee'},
+      {img:LP+'0843b6ce4b2787d1ecea5a493db4c72c.jpg',name:'H.E.R.'},
+      {img:LP+'0b39f634d171be1d841432983bedf4f8.jpg',name:'Billie Eilish — Hit Me Hard'},
+      {img:LP+'18aa995b3761b82db7b3cdb1a0fc938b.jpg',name:'ASAP Rocky — Paris'},
+      {img:LP+'198e3d3a9dfca500d8e8cc1acf8feea6.jpg',name:'ASAP Rocky — Abstract'},
+      {img:LP+'1f0b04eec3889b27689d0877a940bcdc.jpg',name:'Rodman — The Worm'},
+      {img:LP+'1f41cea3420d3a05ce9397cd098f982f.jpg',name:'aespa — Karina'},
+      {img:LP+'1f79da0b6ee76bb5158fc6c9ba5cf19d.jpg',name:'PinkPantheress — Fancy That'},
+      {img:LP+'262712152d3a6ecb1fd6a1250620e2ac.jpg',name:'TV Girl — Cigarettes Window'},
+      {img:LP+'26895093c2a1816217e802c145f7e050.jpg',name:'Monaleo — Raisin Hell'},
+      {img:LP+'2a8dbd85ca5e96346ac171668a34d2b4.jpg',name:'Michael Jackson — GOAT'},
+      {img:LP+'3c6785d7f898a7fbf934d97cc8f76073.jpg',name:'ASAP Rocky — Perfect'},
+      {img:LP+'3da44ce85a3c8c56a6a915139ab32edf.jpg',name:'Laufey'},
+      {img:LP+'40559ce0ed010ce23d96dcddfbede766.jpg',name:'Lana Del Rey'},
+      {img:LP+'46cebf950f4a0538dc4b68019d391df3.jpg',name:'PinkPantheress — Turn It Up'},
+      {img:LP+'4873990225cc373dd9e5db69307e6371.jpg',name:'PinkPantheress — Blue'},
+      {img:LP+'5a1ea60c11ccf50beef712ae6a608f95.jpg',name:'King Von'},
+      {img:LP+'64ace9a7808c6edbe139c7141bc55fcf.jpg',name:'Doechii — Denial Is A River'},
+      {img:LP+'69ed0c8660c59046bb2157ea886c0099.jpg',name:'The Marias — Baby Come Back'},
+      {img:LP+'6d77dd016f49c3afacfec38269025818.jpg',name:'XXXTentacion'},
+      {img:LP+'6e864eac879573e097f5e081c3277781.jpg',name:'Tyla'},
+      {img:LP+'727aa6270d95096c5b5b04c86e76b704.jpg',name:'Tyler — Discographie'},
+      {img:LP+'72ad89a204f0de486555588833da4b87.jpg',name:'Gorillaz'},
+      {img:LP+'7a197f8de50bd8a121a591d51fe4bcfc.jpg',name:'Tyler — Flower Boy'},
+      {img:LP+'7cdfeb70a9445585aa2912cec57153b4.jpg',name:'TV Girl — Who Really Cares'},
+      {img:LP+'80018dea0ec8eebb76a639023037932f.jpg',name:'Tems'},
+      {img:LP+'839de002a4ad741ce773be746bbb7b28.jpg',name:'Doechii — Swag'},
+      {img:LP+'87496ca43492f8107687d9505f6b7824.jpg',name:'SZA — SOS'},
+      {img:LP+'88709cda508e266d01afa9a17aa8e17d.jpg',name:'PinkPantheress — Pain'},
+      {img:LP+'8987742c5485390ac8467cf9d52a7d46.jpg',name:'2Pac — All Eyez On Me'},
+      {img:LP+'8d1c7a70d4e8d3efa47e10ebd56a65f2.jpg',name:'Tyla — A-Pop'},
+      {img:LP+'8dd0adbe34805f88ee0df7f805b1d707.jpg',name:'Joji — Nectar'},
+      {img:LP+'90275353d7a2dfd37e9a3a6eed27aa0e.jpg',name:'The Weeknd — Starboy'},
+      {img:LP+'923ae901265010e71981b2bc43b272e5.jpg',name:'Laufey — Clockwork'},
+      {img:LP+'933cd16f3a79b97b1d6da31573774668.jpg',name:'SZA — Luther'},
+      {img:LP+'978d390c1a87c756aad0d6916b3bd55a.jpg',name:'Kendrick Lamar — GNX Grammy'},
+      {img:LP+'9f91f91720ec042acc49ee1a166553c5.jpg',name:'Tyler — Wolf'},
+      {img:LP+'a468153d29c6a3a35ce2074b56b6f46c.jpg',name:'Frank Ocean — Channel'},
+      {img:LP+'aa5ea096ee36cc7099dc8ce36168cd5a.jpg',name:'Billie Eilish — HMHAS 2024'},
+      {img:LP+'b3032dde9790eb1e817fc6614ad33aad.jpg',name:'Billie Eilish — Blue'},
+      {img:LP+'b4aac440f1665cb3aa8ca78a78b6c55e.jpg',name:'Kendrick Lamar — GNX'},
+      {img:LP+'b62970ebf98790d48fc70d84249bdb80.jpg',name:'TV Girl — Montreal'},
+      {img:LP+'b75726f443b03315fc9643269f432d72.jpg',name:'Charli x Billie — Guess'},
+      {img:LP+'bba34b170c20238226d5942ae8e6f8e8.jpg',name:'XXXTentacion — Portrait'},
+      {img:LP+'beff90a7bea4a0f304fb6847d4ba800e.jpg',name:'Snoop Dogg'},
+      {img:LP+'c75cc812f030ee55acb8dcfabbdd3579.jpg',name:'Billie Eilish — Happier Ever'},
+      {img:LP+'c9da44b7928176571a5ff509849de53c.jpg',name:'Lil Durk'},
+      {img:LP+'d0e094d39c875e22f56a1c047cb65ff7.jpg',name:'Tame Impala — Currents'},
+      {img:LP+'d4d9c0a90bba0435ffc1211189f0f106.jpg',name:'The Weeknd — After Hours'},
+      {img:LP+'d8dfc7e140471980b6e8b334dc48da94.jpg',name:'Billie Eilish — Birds Feather'},
+      {img:LP+'dbbc666a1a375417d7b0019ce4f5f0a7.jpg',name:'Juice WRLD — Lean Wit Me'},
+      {img:LP+'e120363943e8f88dcba7276194afa423.jpg',name:'Billie Eilish — Bossa Nova'},
+      {img:LP+'e62166a783fef22cb9bc1472dbd03433.jpg',name:'Lil Tecca — 500LB'},
+      {img:LP+'e8b68d6a8c54af89a430be35bcda0fe1.jpg',name:'Tomie — Hong Eunchae'},
+      {img:LP+'ec45cf3f50040db7a0e36728352ae764.jpg',name:'Michael Jackson — Beat It'},
+      {img:LP+'efa2de247308c33b00838de9cc15eb64.jpg',name:'Juice WRLD — Legend'},
+      {img:LP+'efe06150119e0f51c3be7c514c3b1ced.jpg',name:'Eminem — Lose Yourself'},
+      {img:LP+'f60530fe9ae7dddab82615e051f74a45.jpg',name:'ASAP Rocky — Punk Rocky'},
+      {img:LP+'f6193eadf40061190f79d903e70e6c6d.jpg',name:'Arctic Monkeys'},
+      {img:LP+'f621961e7a53fac43586280626697337.jpg',name:'Frank Ocean — Blonde'},
+    ]
+  },
+  'Posters football':{num:'03',phone:'243824120177',accent:'football',
+    items:[
+      {img:LP+'01b6d174963d2a1e95a6e4cf410319cf.jpg',name:'Desire Doue — PSG'},
+      {img:LP+'031ec91a6aacf2cd1798c17ac3ace1ee.jpg',name:'Kylian Mbappe'},
+      {img:LP+'050135dcaf58795d929bbc379510d33f.jpg',name:'Mario Balotelli'},
+      {img:LP+'0a325805b6c5f445a37755e882e8737f.jpg',name:'Michael Olise — Bayern'},
+      {img:LP+'123660ef5ab4b3762d58b0f9f8713d7f.jpg',name:'Raphinha — Barcelona'},
+      {img:LP+'144f59884f30ce500b6f46d66f35f731.jpg',name:'Neymar — Brasil'},
+      {img:LP+'15bed9478d42e1bdc6d58216412a7082.jpg',name:'Lionel Messi'},
+      {img:LP+'160f823ed6899753df8b24ac4b3731e2.jpg',name:'Zidane — France'},
+    ],
+    extra:[
+      {img:LP+'1a20db2889d6250473a1e954e55e0c38.jpg',name:'Legende Brasil'},
+      {img:LP+'1b13bf2d2e19faad9a94f3a60fdee534.jpg',name:'Messi — Barcelona GOAT'},
+      {img:LP+'1d7be0bf63a4462412d95192d344c36d.jpg',name:'David Beckham'},
+      {img:LP+'27a0d16c653e6d524974140edefad1bb.jpg',name:'Lamine Yamal — Real Goat'},
+      {img:LP+'2b82bd4f70bb006b39ba0ad01c2f3d16.jpg',name:'Jesse Lingard'},
+      {img:LP+'2f7ac503e4adbc3acfb8df8a3de64830.jpg',name:'Paulo Dybala — La Joya'},
+      {img:LP+'3044bc8dd28275bd20315ecd94cf9ed5.jpg',name:'Cristiano Ronaldo — CR7'},
+      {img:LP+'363e61862cdb18584d072a55036d21d7.jpg',name:'Neymar — Young'},
+      {img:LP+'381115a203b0bfe52964a9cbcaded6d5.jpg',name:'Real Madrid — Royal Front'},
+      {img:LP+'3f88e4ec7092d06a73e6e2dfa58a2f85.jpg',name:'Zlatan Ibrahimovic'},
+      {img:LP+'43d12b6ec1416bc64f623ecf2799c440.jpg',name:'Michael Olise'},
+      {img:LP+'44f9c9554a9dde798ec72d88429f6b22.jpg',name:'Lamine Yamal — Espagne'},
+      {img:LP+'53af5b081b08f547c1f7ed9d5ee3d102.jpg',name:'Ronaldinho — Joga Bonito'},
+      {img:LP+'5ae0d1ef4111191c729d7d350b8b128b.jpg',name:'Federico Valverde'},
+      {img:LP+'5eb899079140195f7405bf22b59da8f2.jpg',name:'Cole Palmer — England'},
+      {img:LP+'68c53194e56b0922d6734d60a60446b2.jpg',name:'Arda Guler — Real Madrid'},
+      {img:LP+'6ddb41b125dc373b5151767afcf597aa.jpg',name:'Cristiano Ronaldo — Prime 2008'},
+      {img:LP+'6e4b1d9f1a222b0d90254167bb3e4871.jpg',name:'Messi — Argentine Capitan'},
+      {img:LP+'79a069ccc26319ed38f72024e57b4631.jpg',name:'Messi — Young Argentina'},
+      {img:LP+'7c8ac4b251e6f83c99add19ee911ea60.jpg',name:'Paolo Maldini'},
+      {img:LP+'7d4b6a0f1b1353748b10b9e3baf05f7b.jpg',name:'Ousmane Dembele — PSG'},
+      {img:LP+'8a0d93fa5e338a1edd24e648097b9d26.jpg',name:'Cole Palmer — Ice Cold Chelsea'},
+      {img:LP+'8d2cf749cadd6248b444b025fcd79f12.jpg',name:'Believe — Football'},
+      {img:LP+'a54f0da95cc74cf0e23d9f24919ce868.jpg',name:'Barcelona Boys'},
+      {img:LP+'b04b6bb6b282e0277f16145987168c08.jpg',name:'Neymar — King Without Crown'},
+      {img:LP+'b20778b7bd8fc90a3183a6c0c767d44b.jpg',name:'Pedri — Barcelona'},
+      {img:LP+'b6865400e19e6876a2cbfd9d4f420089.jpg',name:'Messi — Vamos Argentina'},
+      {img:LP+'c1354362859f456b26a83bba5a28528a.jpg',name:'Joao Pedro — Chelsea'},
+      {img:LP+'c41b327fb7786cfa944d4665e293a226.jpg',name:'Kobbie Mainoo'},
+      {img:LP+'cbfede09aec80d82dd28f5a25ceaf395.jpg',name:'Vitinha — PSG'},
+      {img:LP+'cfff289044b1dfff7d6849963d54cf27.jpg',name:'Messi — Portrait'},
+      {img:LP+'d06f6617f4f4c62db3552d3ffca51321.jpg',name:'Erling Haaland'},
+      {img:LP+'d1cd5c0adb4b737848e27709bd25e787.jpg',name:'Cristiano Ronaldo — Celebration'},
+      {img:LP+'d9c05d43e6ed1b1b9bff5468899aeadb.jpg',name:'Fermin Lopez — Barcelona'},
+      {img:LP+'deeeaa5c69ef5d9738965655c03583a3.jpg',name:'Mohamed Salah — Liverpool'},
+      {img:LP+'e6fa96f5fa52ac2c772b2dd741e022bc.jpg',name:'Zidane — Trophees France'},
+      {img:LP+'ee75d3c9664a4e1a84922f6adc0bb063.jpg',name:'Zlatan — Like Wine'},
+      {img:LP+'ef84a0eb8865349deb9648bd6df16c3f.jpg',name:'Antoine Griezmann'},
+      {img:LP+'f02dc0e27cc5c4a8be33ef7646ae6ade.jpg',name:'Jude Bellingham — Real Madrid'},
+    ]
+  },
+  'Magazines':{num:'04',phone:'243961293567',accent:'magazine',
+    items:[
+      {img:CDN+'158e432863c74f1ba7e4fdc6b1975a0b?format=webp&width=600',name:'Birthday Magazine'},
+      {img:CDN+'b8e4e4d3ed6f4d44b7e455f59b998dab?format=webp&width=600',name:'Pink Edition'},
+      {img:CDN+'40d44898df684e82baba454e5c46c5c3?format=webp&width=600',name:'Vogue Birthday'},
+      {img:CDN+'08814db1d6ff404d87fbba750748c707?format=webp&width=600',name:'The Emperor'},
+      {img:CDN+'2a3b5c4f001b467ea1b0c4551947543d?format=webp&width=600',name:'Birthday Stories'},
+      {img:CDN+'2609a8a9f28c4ddf8a13118229d1efe9?format=webp&width=600',name:'Whos That Girl'},
+      {img:CDN+'599d29ae5a4b428bb9dcc83c570cbe8e?format=webp&width=600',name:'Her Vibe'},
+      {img:CDN+'4697463e85ca40e8a7d42695740a6e95?format=webp&width=600',name:'Birthday Issue'},
+      {img:CDN+'f15c24d20e5d4ddea612169a42f07c2d?format=webp&width=600',name:'The Magazine'},
+      {img:CDN+'aeda8317e80845898d710913b4569d29?format=webp&width=600',name:'Memory Pages'},
+    ],
+    extra:[]
+  }
+};
+
+const A={
+  manga:{wrap:'',h:'text-[#f5f2ea]',meta:'text-white/30',bdr:'border-white/10',btn:'bg-[#9be619] text-[#111] hover:opacity-80',vp:'border-[#9be619] text-[#9be619] hover:bg-[#9be619] hover:text-[#111]',cu:'border border-[#9be619]/40 text-[#9be619] hover:bg-[#9be619] hover:text-[#111]',grid:'grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-3 sg sg3',cm:'Bonjour CREATY, je souhaite un poster manga personnalise.'},
+  music:{wrap:'bg-[#e50914] px-5 py-8 sm:px-8',h:'text-black',meta:'text-black/35',bdr:'border-black/15',btn:'bg-white text-[#e50914] hover:opacity-80',vp:'border-black text-black hover:bg-black hover:text-white',cu:'border border-black/30 text-black hover:bg-black hover:text-white',grid:'grid grid-cols-2 gap-4 sm:gap-5 sg',cm:'Bonjour CREATY, je souhaite un poster musique personnalise.'},
+  football:{phone:'243824120177',wrap:'bg-[#0a1628] px-5 py-8 sm:px-8',h:'text-[#f5f2ea]',meta:'text-white/30',bdr:'border-white/10',btn:'bg-[#22c55e] text-[#0a1628] hover:opacity-80',vp:'border-[#22c55e] text-[#22c55e] hover:bg-[#22c55e] hover:text-[#0a1628]',cu:'border border-[#22c55e]/40 text-[#22c55e] hover:bg-[#22c55e] hover:text-[#0a1628]',grid:'grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-3 sg sg3',cm:'Bonjour CREATY, je souhaite un poster football personnalise.'},
+  magazine:{wrap:'bg-[#f5f2ea] px-5 py-8 sm:px-8',h:'text-pink-600',meta:'text-pink-400',bdr:'border-pink-200',btn:'bg-pink-500 text-white hover:opacity-80',vp:'border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white',cu:'border border-pink-400 text-pink-500 hover:bg-pink-500 hover:text-white',grid:'grid grid-cols-2 gap-4 sm:gap-5 sg',cm:'Bonjour CREATY, je souhaite un magazine personnalise.'}
+};
+
+let activeFilter='Tout',cart=[],modalItem=null;
+const EXP={};
+
+function fc(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' FC';}
+
+function render(){
+  document.getElementById('filters').innerHTML=['Tout',...Object.keys(DATA)].map(k=>{
+    const a=activeFilter===k;
+    const c=a?'border-[#9be619] bg-[#9be619] text-[#111]':'border-white/20 text-white/50 hover:border-white/60 hover:text-white';
+    return '<button data-f="'+k+'" onclick="setFilter(this.dataset.f)" class="whitespace-nowrap border px-5 py-2.5 text-[9px] font-bold uppercase tracking-[.2em] '+c+'">'+k+'</button>';
+  }).join('');
+  const groups=activeFilter==='Tout'?Object.keys(DATA):[activeFilter];
+  document.getElementById('collections').innerHTML=groups.map(g=>buildSection(g)).join('');
+  requestAnimationFrame(observe);
+}
+
+function buildSection(g){
+  const cat=DATA[g],ac=A[cat.accent],exp=EXP[g]||false;
+  const all=[...cat.items,...cat.extra];
+  const vis=exp?all:cat.items.slice(0,INIT);
+  const hidden=(cat.items.length-INIT)+cat.extra.length;
+  const hasMore=hidden>0;
+  const xLbl=cat.extra.length>0?' + '+cat.extra.length+' nouveaux':'';
+  const vpTxt=exp?'Voir moins':'Voir plus ('+hidden+xLbl+')';
+  const waCu='https://wa.me/'+cat.phone+'?text='+encodeURIComponent(ac.cm);
+  const cards=vis.map(it=>buildCard(it,g,ac)).join('');
+  const vpBtn=hasMore?'<button data-g="'+g+'" onclick="toggleExp(this.dataset.g)" class="border px-8 py-4 text-[9px] font-bold uppercase tracking-[.25em] hover:-translate-y-0.5 '+ac.vp+'">'+vpTxt+'</button>':'';
+  const cuBtn='<a href="'+waCu+'" target="_blank" rel="noopener" class="flex items-center gap-2 border px-6 py-4 text-[9px] font-bold uppercase tracking-[.2em] hover:-translate-y-0.5 '+ac.cu+'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Poster personnalise</a>';
+  return '<section class="mb-16 '+ac.wrap+'" data-g="'+g+'"><div class="mb-8 flex items-end justify-between border-b '+ac.bdr+' pb-5"><div><p class="text-[9px] font-bold uppercase tracking-[.3em] '+ac.meta+' mb-2">'+cat.num+' / Collection</p><h3 class="fd font-black leading-[.85] tracking-[-0.06em] '+ac.h+'" style="font-size:clamp(2rem,5vw,3.5rem)">'+g.toUpperCase()+'</h3></div><span class="'+ac.meta+' text-[9px] font-bold uppercase">'+all.length+' pieces</span></div><div class="'+ac.grid+'">'+cards+'</div><div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">'+vpBtn+cuBtn+'</div></section>';
+}
+
+function buildCard(it,g,ac){
+  const img=it.img.replace(/"/g,'&quot;'),nm=it.name.replace(/"/g,'&quot;');
+  return '<article class="card rv group min-w-0"><div class="aspect-[3/4] overflow-hidden bg-[#1a1a1a]"><img class="ci h-full w-full object-cover" src="'+img+'" alt="'+nm+'" loading="lazy"></div><div class="mt-2.5 space-y-2"><p class="text-[10px] font-bold uppercase leading-tight">'+it.name+'</p><button data-group="'+g+'" data-name="'+nm+'" data-img="'+img+'" onclick="openModal(this)" class="w-full py-2.5 text-[9px] font-bold uppercase tracking-[.15em] '+ac.btn+'">+ Ajouter au panier</button></div></article>';
+}
+
+function toggleExp(g){EXP[g]=!EXP[g];render();if(!EXP[g])setTimeout(()=>{document.querySelector('[data-g="'+g+'"]')?.scrollIntoView({behavior:'smooth',block:'start'});},50);else setTimeout(observe,80);}
+function setFilter(f){activeFilter=f;Object.keys(EXP).forEach(k=>delete EXP[k]);render();}
+
+function observe(){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}});},{threshold:0.06,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.rv:not(.on)').forEach(el=>io.observe(el));
+}
+
+function openModal(btn){
+  modalItem={g:btn.dataset.group,nm:btn.dataset.name,img:btn.dataset.img};
+  document.getElementById('mImg').src=modalItem.img;
+  document.getElementById('mName').textContent=modalItem.nm;
+  document.getElementById('modal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('on');
+  modalItem=null;
+  if(!document.getElementById('cart').classList.contains('open'))document.body.style.overflow='';
+}
+function selectFormat(btn){
+  if(!modalItem)return;
+  const fmt=btn.dataset.fmt,price=parseInt(btn.dataset.price);
+  cart.push({g:modalItem.g,nm:modalItem.nm,img:modalItem.img,fmt,price});
+  syncCart();
+  showToast(modalItem.nm+' — '+fmt+' · '+fc(price));
+  closeModal();
+}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+function removeItem(i){cart.splice(i,1);syncCart();}
+function clearCart(){cart=[];syncCart();}
+
+function syncCart(){
+  const n=cart.length;
+  const cc=document.getElementById('cartCount');
+  cc.textContent=n;cc.classList.toggle('hidden',n===0);
+  document.getElementById('cTotal').textContent='('+n+')';
+  const box=document.getElementById('cItems');
+  if(n===0){box.innerHTML='<div class="py-14 text-center text-sm text-black/25 leading-relaxed">Votre sac est vide.<br>Parcourez la collection !</div>';}
+  else{box.innerHTML=cart.map((it,i)=>'<div class="flex items-center gap-3 border-b border-black/8 py-3"><div class="h-16 w-11 shrink-0 overflow-hidden bg-black/5"><img src="'+it.img+'" class="h-full w-full object-cover" loading="lazy" alt="'+it.nm+'"></div><div class="flex-1 min-w-0"><p class="truncate text-[11px] font-bold">'+it.nm+'</p><p class="text-[9px] text-black/40 mt-0.5 uppercase tracking-widest">'+it.g+'</p><p class="text-[10px] font-black text-[#111] mt-0.5">'+it.fmt+' · '+fc(it.price)+'</p></div><button onclick="removeItem('+i+')" class="shrink-0 text-xl leading-none text-black/20 hover:text-black/70">x</button></div>').join('');}
+  const total=cart.reduce((s,x)=>s+x.price,0);
+  document.getElementById('cSummary').classList.toggle('hidden',n===0);
+  document.getElementById('cTotalPrice').textContent=fc(total);
+  const ob=document.getElementById('cOrder');
+  if(n>0){
+    const list=cart.map((it,i)=>(i+1)+'. '+it.nm+' ('+it.fmt+' — '+fc(it.price)+')').join('\n');
+    const msg='Bonjour CREATY\n\nJe souhaite commander :\n'+list+'\n\nTotal : '+fc(total)+'\n\nMerci !';
+    const allFootball=cart.every(x=>x.g==='Posters football');
+    const orderPhone=allFootball ? DATA['Posters football'].phone : (cart.every(x=>x.g==='Posters manga') ? DATA['Posters manga'].phone : '243961293567');
+    ob.href='https://wa.me/'+orderPhone+'?text='+encodeURIComponent(msg);
+    ob.classList.remove('pointer-events-none','opacity-40');
+  } else {ob.href='#';ob.classList.add('pointer-events-none','opacity-40');}
+}
+
+function toggleCart(){
+  const c=document.getElementById('cart'),bd=document.getElementById('cBd'),open=c.classList.contains('open');
+  c.classList.toggle('open',!open);bd.classList.toggle('on',!open);
+  document.body.style.overflow=open?'':'hidden';
+}
+
+let toastT;
+function showToast(txt){
+  const t=document.getElementById('toast');
+  document.getElementById('toastTxt').textContent=txt;
+  t.classList.add('on');clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('on'),3000);
+}
+
+render();syncCart();observe();
+</script>
+</body>
+</html>
