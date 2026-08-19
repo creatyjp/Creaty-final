@@ -161,13 +161,13 @@
     <div class="flex items-start gap-4 border-b border-black/10 p-5">
       <div class="h-20 w-14 shrink-0 overflow-hidden bg-black/5"><img id="mImg" class="h-full w-full object-cover" src="" alt=""></div>
       <div class="flex-1 min-w-0">
-        <p class="text-[8px] font-bold uppercase tracking-[.3em] text-black/40 mb-1">Choisir votre format</p>
+        <p id="mModalLabel" class="text-[8px] font-bold uppercase tracking-[.3em] text-black/40 mb-1">Choisir votre format</p>
         <p id="mName" class="fd text-base font-black leading-tight"></p>
-        <p class="mt-1 text-[9px] text-black/40">Selectionnez la taille souhaitee</p>
+        <p id="mModalDescription" class="mt-1 text-[9px] text-black/40">Selectionnez la taille souhaitee</p>
       </div>
       <button onclick="closeModal()" class="shrink-0 text-xl leading-none text-black/25 hover:text-black/60 mt-0.5">x</button>
     </div>
-    <div class="p-4 space-y-2.5">
+    <div id="formatOptions" class="p-4 space-y-2.5">
       <button data-fmt="A2" data-price="2500" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5">
         <div><p class="fd text-sm font-black">Format A2</p><p class="mt-0.5 text-[9px] text-black/45">42 x 59 cm - Standard</p></div>
         <span class="fd text-base font-black">2.500 FC</span>
@@ -422,6 +422,7 @@ let activeFilter='Tout',cart=[],modalItem=null;
 const EXP={};
 
 function fc(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' FC';}
+function displayPrice(item){return item.currency==='USD'?item.price+'$':fc(item.price);}
 
 function render(){
   document.getElementById('filters').innerHTML=['Tout',...Object.keys(DATA)].map(k=>{
@@ -466,6 +467,12 @@ function openModal(btn){
   modalItem={g:btn.dataset.group,nm:btn.dataset.name,img:btn.dataset.img};
   document.getElementById('mImg').src=modalItem.img;
   document.getElementById('mName').textContent=modalItem.nm;
+  const isMagazine=modalItem.g==='Magazines';
+  document.getElementById('mModalLabel').textContent=isMagazine?'Prix du magazine':'Choisir votre format';
+  document.getElementById('mModalDescription').textContent=isMagazine?'':'Selectionnez la taille souhaitee';
+  document.getElementById('formatOptions').innerHTML=isMagazine
+    ?'<button data-fmt="Magazine" data-price="10" data-currency="USD" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-pink-300 p-4 text-left hover:border-pink-500 hover:bg-pink-50"><p class="fd text-sm font-black">Magazine</p><span class="fd text-base font-black">10$</span></button>'
+    :'<button data-fmt="A2" data-price="2500" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5"><div><p class="fd text-sm font-black">Format A2</p><p class="mt-0.5 text-[9px] text-black/45">42 x 59 cm - Standard</p></div><span class="fd text-base font-black">2.500 FC</span></button><button data-fmt="A3" data-price="5000" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5"><div><p class="fd text-sm font-black">Format A3</p><p class="mt-0.5 text-[9px] text-black/45">30 x 42 cm - Compact</p></div><span class="fd text-base font-black">5.000 FC</span></button><button data-fmt="A1" data-price="10000" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5"><div><p class="fd text-sm font-black">Format A1 <span class="text-[8px] bg-[#9be619] text-[#111] px-1.5 py-0.5 ml-1 font-bold uppercase">Grand</span></p><p class="mt-0.5 text-[9px] text-black/45">59 x 84 cm - Premium</p></div><span class="fd text-base font-black">10.000 FC</span></button>';
   document.getElementById('modal').classList.add('on');
   document.body.style.overflow='hidden';
 }
@@ -476,10 +483,10 @@ function closeModal(){
 }
 function selectFormat(btn){
   if(!modalItem)return;
-  const fmt=btn.dataset.fmt,price=parseInt(btn.dataset.price);
-  cart.push({g:modalItem.g,nm:modalItem.nm,img:modalItem.img,fmt,price});
+  const fmt=btn.dataset.fmt,price=parseInt(btn.dataset.price),currency=btn.dataset.currency||'FC';
+  cart.push({g:modalItem.g,nm:modalItem.nm,img:modalItem.img,fmt,price,currency});
   syncCart();
-  showToast(modalItem.nm+' — '+fmt+' · '+fc(price));
+  showToast(modalItem.nm+' — '+fmt+' · '+displayPrice({price,currency}));
   closeModal();
 }
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
@@ -494,14 +501,15 @@ function syncCart(){
   document.getElementById('cTotal').textContent='('+n+')';
   const box=document.getElementById('cItems');
   if(n===0){box.innerHTML='<div class="py-14 text-center text-sm text-black/25 leading-relaxed">Votre sac est vide.<br>Parcourez la collection !</div>';}
-  else{box.innerHTML=cart.map((it,i)=>'<div class="flex items-center gap-3 border-b border-black/8 py-3"><div class="h-16 w-11 shrink-0 overflow-hidden bg-black/5"><img src="'+it.img+'" class="h-full w-full object-cover" loading="lazy" alt="'+it.nm+'"></div><div class="flex-1 min-w-0"><p class="truncate text-[11px] font-bold">'+it.nm+'</p><p class="text-[9px] text-black/40 mt-0.5 uppercase tracking-widest">'+it.g+'</p><p class="text-[10px] font-black text-[#111] mt-0.5">'+it.fmt+' · '+fc(it.price)+'</p></div><button onclick="removeItem('+i+')" class="shrink-0 text-xl leading-none text-black/20 hover:text-black/70">x</button></div>').join('');}
+  else{box.innerHTML=cart.map((it,i)=>'<div class="flex items-center gap-3 border-b border-black/8 py-3"><div class="h-16 w-11 shrink-0 overflow-hidden bg-black/5"><img src="'+it.img+'" class="h-full w-full object-cover" loading="lazy" alt="'+it.nm+'"></div><div class="flex-1 min-w-0"><p class="truncate text-[11px] font-bold">'+it.nm+'</p><p class="text-[9px] text-black/40 mt-0.5 uppercase tracking-widest">'+it.g+'</p><p class="text-[10px] font-black text-[#111] mt-0.5">'+it.fmt+' · '+displayPrice(it)+'</p></div><button onclick="removeItem('+i+')" class="shrink-0 text-xl leading-none text-black/20 hover:text-black/70">x</button></div>').join('');}
   const total=cart.reduce((s,x)=>s+x.price,0);
+  const oneCurrency=cart.length>0&&cart.every(x=>x.currency===(cart[0].currency||'FC'));
   document.getElementById('cSummary').classList.toggle('hidden',n===0);
-  document.getElementById('cTotalPrice').textContent=fc(total);
+  document.getElementById('cTotalPrice').textContent=oneCurrency?displayPrice({price:total,currency:cart[0].currency||'FC'}):fc(total);
   const ob=document.getElementById('cOrder');
   if(n>0){
-    const list=cart.map((it,i)=>(i+1)+'. '+it.nm+' ('+it.fmt+' — '+fc(it.price)+')').join('\n');
-    const msg='Bonjour CREATY\n\nJe souhaite commander :\n'+list+'\n\nTotal : '+fc(total)+'\n\nMerci !';
+    const list=cart.map((it,i)=>(i+1)+'. '+it.nm+' ('+it.fmt+' — '+displayPrice(it)+')').join('\n');
+    const msg='Bonjour CREATY\n\nJe souhaite commander :\n'+list+'\n\nTotal : '+(oneCurrency?displayPrice({price:total,currency:cart[0].currency||'FC'}):fc(total))+'\n\nMerci !';
     const allFootball=cart.every(x=>x.g==='Posters football');
     const orderPhone=allFootball ? DATA['Posters football'].phone : (cart.every(x=>x.g==='Posters manga') ? DATA['Posters manga'].phone : '243961293567');
     ob.href='https://wa.me/'+orderPhone+'?text='+encodeURIComponent(msg);
