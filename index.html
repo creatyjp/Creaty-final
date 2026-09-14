@@ -167,7 +167,28 @@
       </div>
       <button onclick="closeModal()" class="shrink-0 text-xl leading-none text-black/25 hover:text-black/60 mt-0.5">x</button>
     </div>
-    <div id="modalFormats" class="p-4 space-y-2.5"></div>
+    <div class="p-4 space-y-2.5">
+      <button data-fmt="A5" data-price="2500" data-unit="FC" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5">
+        <div><p class="fd text-sm font-black">Format A5</p><p class="mt-0.5 text-[9px] text-black/45">15 x 21 cm - Mini</p></div>
+        <span class="fd text-base font-black">2.500 FC</span>
+      </button>
+      <button data-fmt="A4" data-price="3000" data-unit="FC" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5">
+        <div><p class="fd text-sm font-black">Format A4</p><p class="mt-0.5 text-[9px] text-black/45">21 x 29 cm - Standard</p></div>
+        <span class="fd text-base font-black">3.000 FC</span>
+      </button>
+      <button data-fmt="A3" data-price="5000" data-unit="FC" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5">
+        <div><p class="fd text-sm font-black">Format A3</p><p class="mt-0.5 text-[9px] text-black/45">30 x 42 cm - Compact</p></div>
+        <span class="fd text-base font-black">5.000 FC</span>
+      </button>
+      <button data-fmt="A2" data-price="10000" data-unit="FC" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5">
+        <div><p class="fd text-sm font-black">Format A2</p><p class="mt-0.5 text-[9px] text-black/45">42 x 59 cm - Grand</p></div>
+        <span class="fd text-base font-black">10.000 FC</span>
+      </button>
+      <button data-fmt="A1" data-price="10" data-unit="$" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5">
+        <div><p class="fd text-sm font-black">Format A1 <span class="text-[8px] bg-[#9be619] text-[#111] px-1.5 py-0.5 ml-1 font-bold uppercase">Premium</span></p><p class="mt-0.5 text-[9px] text-black/45">59 x 84 cm - Maxi</p></div>
+        <span class="fd text-base font-black text-green-600">10$</span>
+      </button>
+    </div>
     <div class="px-4 pb-4"><button onclick="closeModal()" class="w-full border border-black/15 py-3 text-[9px] font-bold uppercase tracking-widest text-black/35 hover:border-black/40">Annuler</button></div>
   </div>
 </div>
@@ -449,35 +470,10 @@ function observe(){
   document.querySelectorAll('.rv:not(.on)').forEach(el=>io.observe(el));
 }
 
-// Options selon catégorie
-const FORMATS={
-  default:[
-    {fmt:'A5',price:2500,unit:'FC',label:'Format A5',desc:'15 x 21 cm - Mini',disp:'2.500 FC',extra:''},
-    {fmt:'A4',price:3500,unit:'FC',label:'Format A4',desc:'21 x 29 cm - Standard',disp:'3.500 FC',extra:''},
-    {fmt:'A3',price:5000,unit:'FC',label:'Format A3',desc:'30 x 42 cm - Compact',disp:'5.000 FC',extra:''},
-    {fmt:'A2',price:10000,unit:'FC',label:'Format A2',desc:'42 x 59 cm - Grand',disp:'10.000 FC',extra:''},
-    {fmt:'A1',price:10,unit:'$',label:'Format A1',desc:'59 x 84 cm - Maxi',disp:'10$',extra:'<span class="text-[8px] bg-[#9be619] text-[#111] px-1.5 py-0.5 ml-1 font-bold uppercase">Premium</span>'},
-  ],
-  magazine:[
-    {fmt:'5 pages',price:5,unit:'$',label:'5 Pages',desc:'Magazine personnalise 5 pages',disp:'5$',extra:''},
-    {fmt:'10 pages',price:10,unit:'$',label:'10 Pages',desc:'Magazine personnalise 10 pages',disp:'10$',extra:'<span class="text-[8px] bg-pink-500 text-white px-1.5 py-0.5 ml-1 font-bold uppercase">Complet</span>'},
-  ]
-};
 function openModal(btn){
   modalItem={g:btn.dataset.group,nm:btn.dataset.name,img:btn.dataset.img};
   document.getElementById('mImg').src=modalItem.img;
   document.getElementById('mName').textContent=modalItem.nm;
-  const isMag=modalItem.g==='Magazines';
-  const opts=isMag?FORMATS.magazine:FORMATS.default;
-  document.getElementById('modalFormats').innerHTML=opts.map(o=>
-    '<button data-fmt="'+o.fmt+'" data-price="'+o.price+'" data-unit="'+o.unit+'" onclick="selectFormat(this)" class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5">'
-    +'<div><p class="fd text-sm font-black">'+o.label+o.extra+'</p><p class="mt-0.5 text-[9px] text-black/45">'+o.desc+'</p></div>'
-    +'<span class="fd text-base font-black'+(o.unit==='$'?' text-green-600':'')+' ">'+o.disp+'</span>'
-    +'</button>'
-  ).join('');
-  // Titre modal
-  const titleEl=document.querySelector('#modalBox .text-[8px]');
-  if(titleEl)titleEl.textContent=isMag?'Choisir votre formule':'Choisir votre format';
   document.getElementById('modal').classList.add('on');
   document.body.style.overflow='hidden';
 }
