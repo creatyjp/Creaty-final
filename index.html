@@ -112,6 +112,23 @@ body{font-family:Arial,sans-serif;background:#0d0d0d}
     </div>
     <p class="text-[9px] font-bold uppercase tracking-[.25em] text-white/30">Selection 2026 · 190+ designs</p>
   </div>
+
+  <!-- BARRE DE RECHERCHE -->
+  <div class="mb-8 relative">
+    <div class="relative flex items-center">
+      <svg class="absolute left-4 text-white/30 shrink-0" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input id="searchInput" type="text" placeholder="Rechercher un poster... (ex: Messi, Naruto, Billie Eilish)"
+        oninput="handleSearch(this.value)"
+        class="w-full bg-[#161616] border border-white/10 rounded-none pl-11 pr-12 py-4 text-sm text-[#f5f2ea] placeholder-white/25 outline-none focus:border-[#9be619] transition-colors"
+        style="font-family:Arial,sans-serif">
+      <button id="searchClear" onclick="clearSearch()" class="absolute right-4 text-white/30 hover:text-white transition-colors hidden text-xl leading-none">&#x2715;</button>
+    </div>
+    <div id="searchCount" class="hidden mt-2 text-[9px] font-bold uppercase tracking-widest text-[#9be619]"></div>
+  </div>
+  <!-- RÉSULTATS DE RECHERCHE -->
+  <div id="searchResults" class="hidden mb-12"></div>
+
+  <div id="searchResults-spacer"></div>
   <div id="filters" class="mb-12 flex flex-wrap gap-2"></div>
   <div id="collections"></div>
 </section>
@@ -689,6 +706,86 @@ function showToast(txt) {
   t.classList.add('on');
   clearTimeout(toastT);
   toastT = setTimeout(function() { t.classList.remove('on'); }, 3000);
+}
+
+
+
+// ─── RECHERCHE ───
+function handleSearch(val) {
+  var q = val.trim().toLowerCase();
+  var clearBtn = document.getElementById('searchClear');
+  var countEl = document.getElementById('searchCount');
+  var resultsEl = document.getElementById('searchResults');
+  var filtersEl = document.getElementById('filters');
+  var collectionsEl = document.getElementById('collections');
+
+  clearBtn.classList.toggle('hidden', !q);
+
+  if (!q) {
+    resultsEl.classList.add('hidden');
+    resultsEl.innerHTML = '';
+    countEl.classList.add('hidden');
+    filtersEl.classList.remove('hidden');
+    collectionsEl.classList.remove('hidden');
+    return;
+  }
+
+  // Cacher filtres et collections normales
+  filtersEl.classList.add('hidden');
+  collectionsEl.classList.add('hidden');
+
+  // Chercher dans tous les DATA
+  var found = [];
+  var groups = Object.keys(DATA);
+  for (var g = 0; g < groups.length; g++) {
+    var grp = groups[g];
+    var cat = DATA[grp];
+    var all = cat.items.concat(cat.extra);
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].name.toLowerCase().indexOf(q) !== -1) {
+        found.push({item: all[i], group: grp, accent: cat.accent});
+      }
+    }
+  }
+
+  countEl.textContent = found.length + ' resultat' + (found.length !== 1 ? 's' : '') + ' pour "' + val.trim() + '"';
+  countEl.classList.remove('hidden');
+
+  if (found.length === 0) {
+    resultsEl.innerHTML = '<div class="py-16 text-center">'
+      + '<p class="text-white/30 text-sm mb-2">Aucun poster trouve pour <span class="text-[#9be619]">"' + val.trim() + '"</span></p>'
+      + '<p class="text-white/20 text-[10px] uppercase tracking-widest">Essayez: Messi, Naruto, Billie, Ronaldo...</p>'
+      + '</div>';
+  } else {
+    var grid = '<div class="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">';
+    for (var j = 0; j < found.length; j++) {
+      var f = found[j];
+      var ac = A[f.accent];
+      var img = f.item.img.replace(/"/g, '&quot;');
+      var nm = f.item.name.replace(/"/g, '&quot;');
+      grid += '<article class="card group min-w-0">'
+        + '<div class="aspect-[3/4] overflow-hidden bg-[#1a1a1a]">'
+        + '<img class="ci h-full w-full object-cover" src="' + img + '" alt="' + nm + '" loading="lazy">'
+        + '</div>'
+        + '<div class="mt-2.5 space-y-1.5">'
+        + '<p class="text-[9px] font-bold uppercase tracking-widest text-white/30">' + f.group + '</p>'
+        + '<p class="text-[10px] font-bold uppercase leading-tight">' + f.item.name + '</p>'
+        + '<button data-group="' + f.group + '" data-name="' + nm + '" data-img="' + img + '" onclick="openModal(this)"'
+        + ' class="w-full py-2 text-[9px] font-bold uppercase tracking-[.15em] transition-all ' + ac.btn + '">'
+        + '+ Ajouter</button>'
+        + '</div></article>';
+    }
+    grid += '</div>';
+    resultsEl.innerHTML = grid;
+  }
+
+  resultsEl.classList.remove('hidden');
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  handleSearch('');
+  document.getElementById('searchInput').focus();
 }
 
 // ─── INIT ───
