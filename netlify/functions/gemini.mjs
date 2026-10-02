@@ -5,20 +5,25 @@ const MODELS = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash', '
 const MAX_TOKENS = 1200;
 const MAX_BODY = 100000;
 
-const json = (status, data) =>
-  new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
+// Sites autorises a utiliser l'IA (en plus du site Netlify lui-meme)
+const ALLOWED_ORIGINS = ['https://creatyjp.github.io'];
 
 export default async (req) => {
+  // Refuse les appels venant d'autres sites
+  const origin = req.headers.get('origin');
+  const allowed = !origin || ALLOWED_ORIGINS.includes(origin) || new URL(origin).host === new URL(req.url).host;
+  const cors = origin && allowed
+    ? { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Vary': 'Origin' }
+    : {};
+  const json = (status, data) =>
+    new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json', ...cors } });
+
+  if (!allowed) return json(403, { error: { code: 403, message: 'Origine non autorisee' } });
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
   if (req.method !== 'POST') return json(405, { error: { code: 405, message: 'Method not allowed' } });
 
   const key = process.env.GEMINI_API_KEY;
   if (!key) return json(500, { error: { code: 500, message: 'GEMINI_API_KEY manquante sur le serveur' } });
-
-  // Refuse les appels venant d'autres sites
-  const origin = req.headers.get('origin');
-  if (origin && new URL(origin).host !== new URL(req.url).host) {
-    return json(403, { error: { code: 403, message: 'Origine non autorisee' } });
-  }
 
   const model = new URL(req.url).searchParams.get('model');
   if (!MODELS.includes(model)) return json(404, { error: { code: 404, message: 'Model not found' } });
@@ -40,5 +45,5 @@ export default async (req) => {
     'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(key),
     { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }
   );
-  return new Response(await r.text(), { status: r.status, headers: { 'Content-Type': 'application/json' } });
+  return new Response(await r.text(), { status: r.status, headers: { 'Content-Type': 'application/json', ...cors } });
 };
