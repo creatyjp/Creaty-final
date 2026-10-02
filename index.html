@@ -113,6 +113,23 @@ body{font-family:Arial,sans-serif;background:#0d0d0d}
     <p class="text-[9px] font-bold uppercase tracking-[.25em] text-white/30">Selection 2026 · 190+ designs</p>
   </div>
 
+  <!-- CHAMP IA -->
+  <div class="mb-5">
+    <div class="ai-ring" style="border-radius:16px">
+      <div onclick="aiOpen()" class="flex items-center gap-3 bg-[#111] px-4 py-3" style="border-radius:15px;cursor:pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" class="shrink-0"><path fill="url(#aiG)" d="M12 2c.6 4.6 3.2 7.6 7.8 8.6L22 12l-2.2.4C15.2 13.4 12.6 16.4 12 22c-.6-5.6-3.2-8.6-7.8-9.6L2 12l2.2-.4C8.8 10.6 11.4 7.6 12 2z"/></svg>
+        <input id="aiEntry" type="text" readonly onfocus="this.blur();aiOpen();"
+          placeholder="Parlez a l'IA : trouvez un poster ou partagez vos idees..."
+          class="flex-1 min-w-0 bg-transparent text-sm text-[#f5f2ea] placeholder-white/50 outline-none" style="cursor:pointer">
+        <button onclick="event.stopPropagation();aiOpen();"
+          class="shrink-0 flex h-9 w-9 items-center justify-center rounded-full bg-[#9be619] text-[#111] transition-transform hover:scale-110" aria-label="Ouvrir l'assistant IA">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+    <p class="mt-2 text-[9px] font-bold uppercase tracking-[.25em] text-white/30">&#10022; Assistant IA &middot; Recommandations, idees deco, formats &amp; prix</p>
+  </div>
+
   <!-- BARRE DE RECHERCHE -->
   <div class="mb-8 relative">
     <div class="relative flex items-center">
@@ -606,7 +623,7 @@ function openModal(btn) {
 function closeModal() {
   document.getElementById('modal').classList.remove('on');
   modalItem = null;
-  if (!document.getElementById('cart').classList.contains('open')) {
+  if (!document.getElementById('cart').classList.contains('open') && !document.getElementById('aiX').classList.contains('on')) {
     document.body.style.overflow = '';
   }
 }
@@ -792,6 +809,301 @@ function clearSearch() {
 render();
 syncCart();
 observe();
+</script>
+
+
+<!-- ═══ CREATY IA — interface plein écran ═══ -->
+<style>
+#modal{z-index:80!important}#toast{z-index:90!important}
+@keyframes gmove{to{background-position:300% 0}}
+.ai-ring{background:linear-gradient(90deg,#9be619,#22c55e,#d946ef,#e50914,#9be619);background-size:300% 100%;animation:gmove 5s linear infinite;padding:1.5px;border-radius:999px;box-shadow:0 0 30px rgba(155,230,25,.12)}
+.ai-grad{background:linear-gradient(90deg,#9be619,#22c55e,#d946ef,#e50914,#9be619);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gmove 7s linear infinite}
+#aiX{position:fixed;inset:0;z-index:60;background:#0a0a0a;display:none;flex-direction:column;color:#f5f2ea;font-family:Arial,sans-serif}
+#aiX.on{display:flex;animation:aiIn .35s ease}
+@keyframes aiIn{from{opacity:0;transform:scale(1.015)}to{opacity:1;transform:none}}
+.ai-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.ai-blob{position:absolute;border-radius:50%;filter:blur(110px);will-change:transform}
+.ab1{width:540px;height:540px;background:#9be619;opacity:.22;top:-200px;left:-140px;animation:bm1 18s ease-in-out infinite}
+.ab2{width:480px;height:480px;background:#d946ef;opacity:.22;bottom:-200px;right:-120px;animation:bm2 22s ease-in-out infinite}
+.ab3{width:400px;height:400px;background:#e50914;opacity:.14;top:35%;left:55%;animation:bm3 20s ease-in-out infinite}
+.ab4{width:360px;height:360px;background:#22c55e;opacity:.13;bottom:5%;left:8%;animation:bm1 26s ease-in-out infinite reverse}
+@keyframes bm1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(140px,90px) scale(1.15)}66%{transform:translate(-70px,150px) scale(.9)}}
+@keyframes bm2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-160px,-120px) scale(1.2)}}
+@keyframes bm3{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-180px,60px) scale(.85)}66%{transform:translate(80px,-90px) scale(1.1)}}
+#aiBody{position:relative;z-index:1;flex:1;overflow-y:auto}
+#aiBody::-webkit-scrollbar{width:4px}#aiBody::-webkit-scrollbar-thumb{background:rgba(155,230,25,.4);border-radius:2px}
+.ai-sug{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;text-align:left;font-size:13px;line-height:1.4;color:#d8d6d0;min-height:110px;display:flex;flex-direction:column;justify-content:space-between;transition:background .2s,border-color .2s,transform .2s;cursor:pointer}
+.ai-sug:hover{background:rgba(155,230,25,.08);border-color:rgba(155,230,25,.35);transform:translateY(-2px)}
+.ai-md strong{color:#fff}.ai-md ul{margin:.4em 0 .4em 1.1em;list-style:disc}.ai-md li{margin:.2em 0}
+.ai-shim{height:12px;border-radius:6px;background:linear-gradient(90deg,rgba(155,230,25,.12),rgba(217,70,239,.38),rgba(229,9,20,.25),rgba(155,230,25,.12));background-size:300% 100%;animation:gmove 1.6s linear infinite}
+.ai-spin{animation:aispin 1.6s linear infinite}@keyframes aispin{to{transform:rotate(360deg)}}
+.ai-in{animation:aiMsg .35s ease}@keyframes aiMsg{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#aiInput{field-sizing:content;max-height:160px}
+#chatBtn{position:fixed;bottom:24px;right:24px;z-index:55;width:58px;height:58px;border-radius:50%;padding:2px;background:linear-gradient(90deg,#9be619,#22c55e,#d946ef,#e50914,#9be619);background-size:300% 100%;animation:gmove 5s linear infinite;box-shadow:0 6px 28px rgba(155,230,25,.35);transition:transform .2s;cursor:pointer;border:none}
+#chatBtn:hover{transform:scale(1.08)}
+#chatBadge{position:absolute;top:-3px;right:-3px;background:#e50914;color:#fff;font-size:8px;font-weight:900;width:18px;height:18px;border-radius:50%;display:none;align-items:center;justify-content:center}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="aiG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9be619"/><stop offset=".5" stop-color="#d946ef"/><stop offset="1" stop-color="#e50914"/></linearGradient>
+</defs></svg>
+
+<button id="chatBtn" onclick="aiOpen()" aria-label="Ouvrir l'assistant IA">
+  <span style="display:flex;width:100%;height:100%;border-radius:50%;background:#111;align-items:center;justify-content:center">
+    <svg width="26" height="26" viewBox="0 0 24 24"><path fill="url(#aiG)" d="M12 2c.6 4.6 3.2 7.6 7.8 8.6L22 12l-2.2.4C15.2 13.4 12.6 16.4 12 22c-.6-5.6-3.2-8.6-7.8-9.6L2 12l2.2-.4C8.8 10.6 11.4 7.6 12 2z"/></svg>
+  </span>
+  <span id="chatBadge">1</span>
+</button>
+
+<div id="aiX" role="dialog" aria-label="Assistant IA CREATY">
+  <div class="ai-bg"><div class="ai-blob ab1"></div><div class="ai-blob ab2"></div><div class="ai-blob ab3"></div><div class="ai-blob ab4"></div></div>
+
+  <!-- Barre du haut -->
+  <div style="position:relative;z-index:2" class="flex items-center gap-3 px-4 py-3 sm:px-6">
+    <svg width="22" height="22" viewBox="0 0 24 24"><path fill="url(#aiG)" d="M12 2c.6 4.6 3.2 7.6 7.8 8.6L22 12l-2.2.4C15.2 13.4 12.6 16.4 12 22c-.6-5.6-3.2-8.6-7.8-9.6L2 12l2.2-.4C8.8 10.6 11.4 7.6 12 2z"/></svg>
+    <p class="fd text-lg font-black tracking-[-0.06em]">CREATY <span class="ai-grad">IA</span></p>
+    <div class="ml-auto flex items-center gap-2">
+      <button onclick="aiNew()" class="rounded-full border border-white/15 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-white/70 hover:border-[#9be619] hover:text-[#9be619] transition-colors">+ Nouveau</button>
+      <button onclick="aiClose();toggleCart();" class="rounded-full border border-white/15 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-white/70 hover:border-[#9be619] hover:text-[#9be619] transition-colors">Sac (<span id="aiCartN">0</span>)</button>
+      <button onclick="aiClose()" aria-label="Fermer" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors">&#x2715;</button>
+    </div>
+  </div>
+
+  <div id="aiBody">
+    <div class="mx-auto max-w-3xl px-4 pb-6 sm:px-6">
+      <!-- Accueil -->
+      <div id="aiWelcome" class="pt-[8vh] sm:pt-[12vh]">
+        <h2 class="fd font-black leading-[1] tracking-[-0.05em]" style="font-size:clamp(2.6rem,7vw,4.4rem)"><span class="ai-grad">Bonjour !</span></h2>
+        <p class="fd mt-2 font-black leading-[1.05] tracking-[-0.04em] text-white/35" style="font-size:clamp(1.7rem,4.6vw,2.9rem)">Quel poster va transformer votre mur ?</p>
+        <div id="aiSugs" class="mt-10 grid grid-cols-2 gap-3 lg:grid-cols-4"></div>
+      </div>
+      <!-- Conversation -->
+      <div id="aiMsgs" class="space-y-7 pt-6"></div>
+    </div>
+  </div>
+
+  <!-- Saisie -->
+  <div style="position:relative;z-index:2" class="px-4 pb-4 pt-2 sm:px-6">
+    <div class="mx-auto max-w-3xl">
+      <div class="ai-ring">
+        <div class="flex items-end gap-2 rounded-full bg-[#151515] py-2 pl-5 pr-2">
+          <textarea id="aiInput" rows="1" placeholder="Demandez a CREATY IA..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();aiSendInput();}"
+            class="flex-1 resize-none bg-transparent py-2 text-[15px] text-[#f5f2ea] placeholder-white/35 outline-none"></textarea>
+          <button id="aiSendBtn" onclick="aiSendInput()" aria-label="Envoyer" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#9be619] text-[#111] transition-all hover:scale-105 disabled:opacity-40">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          </button>
+        </div>
+      </div>
+      <p class="mt-2 text-center text-[10px] text-white/30">L'IA peut se tromper. Confirmez prix et disponibilite sur WhatsApp : 0824 120 177</p>
+    </div>
+  </div>
+</div>
+
+<script>
+var AI_URL = '/.netlify/functions/gemini'; // la cle Gemini est gardee cote serveur (Netlify)
+var GMODELS = ['gemini-2.5-flash','gemini-flash-latest','gemini-2.0-flash','gemini-2.5-flash-lite'];
+var gIdx = 0, aiHist = [], aiBusy = false;
+var SPARK = '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="url(#aiG)" d="M12 2c.6 4.6 3.2 7.6 7.8 8.6L22 12l-2.2.4C15.2 13.4 12.6 16.4 12 22c-.6-5.6-3.2-8.6-7.8-9.6L2 12l2.2-.4C8.8 10.6 11.4 7.6 12 2z"/></svg>';
+
+var AI_SUGS = [
+  {t:'Trouve-moi un poster manga sombre et intense', i:'&#9876;'},
+  {t:'Des idees de posters pour decorer ma chambre', i:'&#127968;'},
+  {t:'Quel format choisir pour un grand mur de salon ?', i:'&#128208;'},
+  {t:'Je veux offrir un poster a un fan de football', i:'&#9917;'}
+];
+
+function aiCatalog() {
+  var out = '';
+  Object.keys(DATA).forEach(function(g) {
+    var c = DATA[g];
+    out += '\n[' + g + '] ' + c.items.concat(c.extra).map(function(x){ return x.name; }).join(' ; ');
+  });
+  return out;
+}
+
+var AI_SYS = "Tu es CREATY IA, l'assistant creatif de JP CREATY, boutique de posters graphiques a Kinshasa (RDC). "
+ + "Tu aides les clients a trouver le poster ideal, tu proposes des idees de deco murale et de compositions, et tu ecoutes leurs idees de posters personnalises avec enthousiasme. "
+ + "Prix posters : A5 (15x21) 2.500 FC, A4 (21x29) 3.500 FC, A3 (30x42) 5.000 FC, A2 (42x59) 10.000 FC, A1 (59x84) 10$. "
+ + "Magazines personnalises : 5 pages 5$, 10 pages 10$. Livraison partout a Kinshasa, paiement a la livraison. "
+ + "Pour commander : bouton Ajouter au panier puis commander sur WhatsApp. Posters personnalises : WhatsApp 0824 120 177. "
+ + "Reponds en francais, ton chaleureux et direct, 2 a 5 phrases, listes courtes si utile. N'invente jamais de poster ni de prix. "
+ + "Quand tu recommandes des posters du catalogue, termine ta reponse par une derniere ligne exactement au format : POSTERS: nom1 | nom2 | nom3 (6 maximum, noms copies exactement du catalogue). Sinon n'ajoute pas cette ligne. "
+ + "CATALOGUE :" + aiCatalog();
+
+function aiEsc(s) { return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+function aiMd(s) {
+  var lines = aiEsc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').split('\n');
+  var out = '', inList = false;
+  lines.forEach(function(l) {
+    var m = l.match(/^\s*(?:[-*]|\d+\.)\s+(.*)/);
+    if (m) { if (!inList) { out += '<ul>'; inList = true; } out += '<li>' + m[1] + '</li>'; }
+    else { if (inList) { out += '</ul>'; inList = false; } if (l.trim()) out += '<p style="margin:.35em 0">' + l + '</p>'; }
+  });
+  if (inList) out += '</ul>';
+  return out;
+}
+
+function aiFind(name) {
+  var n = name.trim().toLowerCase(), best = null;
+  Object.keys(DATA).forEach(function(g) {
+    var c = DATA[g];
+    c.items.concat(c.extra).forEach(function(it) {
+      var nm = it.name.toLowerCase();
+      if (nm === n) best = {item:it, group:g, accent:c.accent};
+      else if (!best && n.length > 3 && (nm.indexOf(n) !== -1 || n.indexOf(nm) !== -1)) best = {item:it, group:g, accent:c.accent};
+    });
+  });
+  return best;
+}
+
+function aiRenderSugs() {
+  var box = document.getElementById('aiSugs');
+  box.innerHTML = '';
+  AI_SUGS.forEach(function(s) {
+    var b = document.createElement('button');
+    b.className = 'ai-sug';
+    b.innerHTML = '<span>' + s.t + '</span><span style="align-self:flex-end;font-size:20px">' + s.i + '</span>';
+    b.onclick = function(){ aiSend(s.t); };
+    box.appendChild(b);
+  });
+}
+
+function aiOpen(q) {
+  var x = document.getElementById('aiX');
+  x.classList.add('on');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('chatBadge').style.display = 'none';
+  document.getElementById('aiCartN').textContent = cart.length;
+  if (!document.getElementById('aiSugs').children.length) aiRenderSugs();
+  if (q) aiSend(q);
+  setTimeout(function(){ document.getElementById('aiInput').focus(); }, 250);
+}
+
+function aiClose() {
+  document.getElementById('aiX').classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+function aiNew() {
+  aiHist = [];
+  document.getElementById('aiMsgs').innerHTML = '';
+  document.getElementById('aiWelcome').style.display = '';
+  document.getElementById('aiInput').focus();
+}
+
+function aiScroll() { var b = document.getElementById('aiBody'); b.scrollTop = b.scrollHeight; }
+
+function aiSendInput() {
+  var el = document.getElementById('aiInput'), t = el.value.trim();
+  if (!t) return;
+  el.value = '';
+  aiSend(t);
+}
+
+function aiAddUser(t) {
+  var d = document.createElement('div');
+  d.className = 'flex justify-end ai-in';
+  d.innerHTML = '<div style="max-width:82%;background:#1f1f1f;border-radius:22px 22px 6px 22px;padding:12px 18px;font-size:15px;line-height:1.5">' + aiEsc(t) + '</div>';
+  document.getElementById('aiMsgs').appendChild(d);
+}
+
+function aiAddLoading() {
+  var d = document.createElement('div');
+  d.id = 'aiLoad'; d.className = 'flex gap-3 ai-in';
+  d.innerHTML = '<div class="shrink-0 ai-spin" style="height:24px">' + SPARK + '</div>'
+    + '<div class="flex-1 space-y-2.5 pt-1"><div class="ai-shim" style="width:92%"></div><div class="ai-shim" style="width:76%"></div><div class="ai-shim" style="width:54%"></div></div>';
+  document.getElementById('aiMsgs').appendChild(d);
+}
+
+function aiAddBot(text) {
+  var posters = [];
+  var m = text.match(/\n?\s*POSTERS\s*:\s*(.+)\s*$/i);
+  if (m) {
+    text = text.slice(0, m.index).trim();
+    m[1].split('|').forEach(function(n){ var f = aiFind(n); if (f && posters.length < 6 && posters.indexOf(f) === -1) posters.push(f); });
+  }
+  var cards = '';
+  if (posters.length) {
+    cards = '<div class="mt-4 flex gap-3 overflow-x-auto pb-2">';
+    posters.forEach(function(f) {
+      var ac = A[f.accent], img = aiEsc(f.item.img), nm = aiEsc(f.item.name);
+      cards += '<div style="width:136px" class="shrink-0">'
+        + '<div class="aspect-[3/4] overflow-hidden rounded-xl bg-[#1a1a1a]"><img src="' + img + '" alt="' + nm + '" class="h-full w-full object-cover" loading="lazy"></div>'
+        + '<p class="mt-2 text-[10px] font-bold uppercase leading-tight">' + nm + '</p>'
+        + '<p class="text-[9px] uppercase tracking-widest text-white/35">' + aiEsc(f.group) + '</p>'
+        + '<button data-group="' + aiEsc(f.group) + '" data-name="' + nm + '" data-img="' + img + '" onclick="openModal(this)" class="mt-2 w-full rounded-full py-2 text-[9px] font-bold uppercase tracking-widest ' + ac.btn + '">+ Ajouter</button>'
+        + '</div>';
+    });
+    cards += '</div>';
+  }
+  var d = document.createElement('div');
+  d.className = 'flex gap-3 ai-in';
+  d.innerHTML = '<div class="shrink-0" style="height:24px">' + SPARK + '</div>'
+    + '<div class="ai-md min-w-0 flex-1 text-[15px] leading-relaxed text-[#e8e6e0]">' + aiMd(text) + cards + '</div>';
+  document.getElementById('aiMsgs').appendChild(d);
+}
+
+function aiSend(t) {
+  if (aiBusy || !t) return;
+  aiBusy = true;
+  document.getElementById('aiWelcome').style.display = 'none';
+  document.getElementById('aiSendBtn').disabled = true;
+  aiAddUser(t);
+  aiHist.push({role:'user', parts:[{text:t}]});
+  aiAddLoading();
+  aiScroll();
+  aiCall();
+}
+
+function aiDone(text) {
+  var l = document.getElementById('aiLoad'); if (l) l.remove();
+  aiAddBot(text);
+  aiBusy = false;
+  document.getElementById('aiSendBtn').disabled = false;
+  aiScroll();
+}
+
+function aiCall() {
+  var contents = aiHist.slice(-10);
+  while (contents.length && contents[0].role !== 'user') contents.shift();
+  var model = GMODELS[gIdx];
+  var cfg = {maxOutputTokens:1200, temperature:0.8};
+  if (model.indexOf('gemini-2.5') === 0) cfg.thinkingConfig = {thinkingBudget:0};
+  fetch(AI_URL + '?model=' + encodeURIComponent(model), {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({systemInstruction:{parts:[{text:AI_SYS}]}, contents:contents, generationConfig:cfg})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    if (data.error) {
+      var msg = data.error.message || '';
+      if ((data.error.code === 404 || /not found|not supported|thinking/i.test(msg)) && gIdx < GMODELS.length - 1) { gIdx++; aiCall(); return; }
+      console.error('Gemini:', data.error);
+      aiDone(data.error.code === 429
+        ? "Beaucoup de demandes en ce moment, reessayez dans une minute. Vous pouvez aussi nous ecrire sur WhatsApp : 0824 120 177."
+        : "Desolee, je n'arrive pas a repondre pour le moment. Ecrivez-nous sur WhatsApp : 0824 120 177.");
+      return;
+    }
+    var c = data.candidates && data.candidates[0];
+    var reply = c && c.content && c.content.parts ? c.content.parts.map(function(p){ return p.text || ''; }).join('').trim() : '';
+    if (!reply) reply = "Je n'ai pas bien compris, pouvez-vous reformuler ?";
+    else aiHist.push({role:'model', parts:[{text:reply}]});
+    aiDone(reply);
+  })
+  .catch(function() { aiDone("Connexion impossible. Verifiez votre internet ou ecrivez-nous sur WhatsApp : 0824 120 177."); });
+}
+
+// Compteur du sac synchronisé dans l'interface IA
+var _syncCartBase = syncCart;
+syncCart = function() { _syncCartBase(); var n = document.getElementById('aiCartN'); if (n) n.textContent = cart.length; };
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('aiX').classList.contains('on') && !document.getElementById('modal').classList.contains('on')) aiClose();
+});
+
+setTimeout(function(){ if (!document.getElementById('aiX').classList.contains('on')) document.getElementById('chatBadge').style.display = 'flex'; }, 3000);
 </script>
 
 </body>

@@ -1,0 +1,7 @@
+# Secrets : ne jamais pousser de cles ni d'identifiants
+.env
+.env.*
+*credentials*.json
+*authentification*.json
+.netlify/
+node_modules/
