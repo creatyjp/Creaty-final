@@ -52,10 +52,12 @@ body{font-family:Arial,sans-serif;background:#0d0d0d}
     <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Posters en petite serie</span>
     <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Paiement a la livraison</span>
     <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Commandes via WhatsApp</span>
+    <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Option avec cadre des 15.000 FC</span>
     <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Livraison partout a Kinshasa</span>
     <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Posters en petite serie</span>
     <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Paiement a la livraison</span>
     <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Commandes via WhatsApp</span>
+    <span class="mx-8 text-[9px] font-bold uppercase tracking-[.28em] text-[#111]">✦ Option avec cadre des 15.000 FC</span>
   </div>
 </div>
 
@@ -227,6 +229,13 @@ body{font-family:Arial,sans-serif;background:#0d0d0d}
       </div>
       <button onclick="closeModal()" class="text-xl leading-none text-black/25 hover:text-black/60">&#x2715;</button>
     </div>
+    <div id="mFrame" class="px-4 pt-4">
+      <p class="mb-2 text-[8px] font-bold uppercase tracking-[.3em] text-black/40">Finition</p>
+      <div class="grid grid-cols-2 border border-black/15">
+        <button id="mFrameNo" type="button" onclick="setFrame(false)">Poster seul</button>
+        <button id="mFrameYes" type="button" onclick="setFrame(true)">Avec cadre</button>
+      </div>
+    </div>
     <div id="mOptions" class="p-4 space-y-2.5"></div>
     <div class="px-4 pb-4">
       <button onclick="closeModal()" class="w-full border border-black/15 py-3 text-[9px] font-bold uppercase tracking-widest text-black/35 hover:border-black/40 transition-all">Annuler</button>
@@ -248,11 +257,11 @@ var PHONE_CUSTOM = '243824120177';
 
 // ─── FORMATS PAR SECTION ───
 var FORMATS_DEFAULT = [
-  {fmt:'A5', price:2500, unit:'FC', label:'Format A5', desc:'15 x 21 cm - Mini'},
-  {fmt:'A4', price:3500, unit:'FC', label:'Format A4', desc:'21 x 29 cm - Standard'},
-  {fmt:'A3', price:5000, unit:'FC', label:'Format A3', desc:'30 x 42 cm - Compact'},
-  {fmt:'A2', price:10000, unit:'FC', label:'Format A2', desc:'42 x 59 cm - Grand'},
-  {fmt:'A1', price:10,   unit:'$',  label:'Format A1 ★', desc:'59 x 84 cm - Premium'}
+  {fmt:'A5', price:2500, unit:'FC', cadre:15000, label:'Format A5', desc:'15 x 21 cm - Mini'},
+  {fmt:'A4', price:3500, unit:'FC', cadre:18000, label:'Format A4', desc:'21 x 29 cm - Standard'},
+  {fmt:'A3', price:5000, unit:'FC', cadre:22000, label:'Format A3', desc:'30 x 42 cm - Compact'},
+  {fmt:'A2', price:10000, unit:'FC', cadre:30000, label:'Format A2', desc:'42 x 59 cm - Grand'},
+  {fmt:'A1', price:10,   unit:'$',  cadre:40000, label:'Format A1 ★', desc:'59 x 84 cm - Premium'}
 ];
 var FORMATS_MAG = [
   {fmt:'5 pages',  price:5,  unit:'$', label:'5 Pages',  desc:'Magazine personnalise 5 pages'},
@@ -611,24 +620,48 @@ function openModal(btn) {
   document.getElementById('mName').textContent = modalItem.nm;
 
   var isMag = modalItem.g === 'Magazines';
-  var opts = isMag ? FORMATS_MAG : FORMATS_DEFAULT;
   document.getElementById('mLabel').textContent = isMag ? 'Choisir votre formule' : 'Choisir votre format';
+  document.getElementById('mFrame').classList.toggle('hidden', isMag);
+  modalFrame = false;
+  renderModalOptions();
+  document.getElementById('modal').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+
+// ─── OPTION AVEC CADRE ───
+var modalFrame = false;
+function setFrame(on) {
+  modalFrame = on;
+  renderModalOptions();
+}
+
+function renderModalOptions() {
+  var isMag = modalItem.g === 'Magazines';
+  var opts = isMag ? FORMATS_MAG : FORMATS_DEFAULT;
+  var fr = !isMag && modalFrame;
+  var tabCls = 'py-3 text-[9px] font-bold uppercase tracking-[.2em] transition-all ';
+  var no = document.getElementById('mFrameNo'), yes = document.getElementById('mFrameYes');
+  no.className = tabCls + (fr ? 'text-black/45 hover:text-black' : 'bg-[#111] text-[#f5f2ea]');
+  yes.className = tabCls + (fr ? 'bg-[#111] text-[#f5f2ea]' : 'text-black/45 hover:text-black');
+  no.setAttribute('aria-pressed', !fr);
+  yes.setAttribute('aria-pressed', fr);
 
   var html = '';
   for (var i = 0; i < opts.length; i++) {
     var o = opts[i];
-    var dol = o.unit === '$';
-    var pcolor = dol ? ' style="color:#16a34a"' : '';
-    html += '<button data-fmt="' + o.fmt + '" data-price="' + o.price + '" data-unit="' + o.unit + '" onclick="selectFormat(this)"'
+    var price = fr ? o.cadre : o.price;
+    var unit = fr ? 'FC' : o.unit;
+    var fmt = fr ? o.fmt + ' + cadre' : o.fmt;
+    var desc = fr ? o.desc + ' · cadre inclus' : o.desc;
+    var pcolor = unit === '$' ? ' style="color:#16a34a"' : '';
+    html += '<button data-fmt="' + fmt + '" data-price="' + price + '" data-unit="' + unit + '" onclick="selectFormat(this)"'
       + ' class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5 transition-all">'
       + '<div><p class="fd text-sm font-black">' + o.label + '</p>'
-      + '<p class="mt-0.5 text-[9px] text-black/45">' + o.desc + '</p></div>'
-      + '<span class="fd text-base font-black"' + pcolor + '>' + priceStr(o.price, o.unit) + '</span>'
+      + '<p class="mt-0.5 text-[9px] text-black/45">' + desc + '</p></div>'
+      + '<span class="fd text-base font-black"' + pcolor + '>' + priceStr(price, unit) + '</span>'
       + '</button>';
   }
   document.getElementById('mOptions').innerHTML = html;
-  document.getElementById('modal').classList.add('on');
-  document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
@@ -935,6 +968,7 @@ function aiCatalog() {
 var AI_SYS = "Tu es CREATY IA, l'assistant creatif de JP CREATY, boutique de posters graphiques a Kinshasa (RDC). "
  + "Tu aides les clients a trouver le poster ideal, tu proposes des idees de deco murale et de compositions, et tu ecoutes leurs idees de posters personnalises avec enthousiasme. "
  + "Prix posters : A5 (15x21) 2.500 FC, A4 (21x29) 3.500 FC, A3 (30x42) 5.000 FC, A2 (42x59) 10.000 FC, A1 (59x84) 10$. "
+ + "Option avec cadre (poster + cadre) : A5 15.000 FC, A4 18.000 FC, A3 22.000 FC, A2 30.000 FC, A1 40.000 FC. Dans la fenetre des formats, choisir Avec cadre. "
  + "Magazines personnalises : 5 pages 5$, 10 pages 10$. Livraison partout a Kinshasa, paiement a la livraison. "
  + "Pour commander : bouton Ajouter au panier puis commander sur WhatsApp. Posters personnalises : WhatsApp 0824 120 177. "
  + "Reponds en francais, ton chaleureux et direct, 2 a 5 phrases, listes courtes si utile. N'invente jamais de poster ni de prix. "
