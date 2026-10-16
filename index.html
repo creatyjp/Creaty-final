@@ -477,7 +477,7 @@ var DATA = {
     ]
   },
   'Posters football': {
-    num:'03', phone:'243961293567', accent:'football',
+    num:'03', phone:'243824120177', accent:'football',
     items:[
       {img:LP+'01b6d174963d2a1e95a6e4cf410319cf.jpg',name:'Desire Doue — PSG'},
       {img:LP+'031ec91a6aacf2cd1798c17ac3ace1ee.jpg',name:'Kylian Mbappe'},
@@ -531,7 +531,7 @@ var DATA = {
     ]
   },
   'Posters game': {
-    num:'04', phone:'243961293567', accent:'game',
+    num:'04', phone:'243824120177', accent:'game',
     items:[
       {img:LP+'game-god-of-war-kratos-atreus.jpg',name:'God of War — Kratos & Atreus'},
       {img:LP+'game-the-last-of-us-remastered.jpg',name:'The Last of Us — Remastered'},
@@ -971,8 +971,10 @@ function syncCart() {
         + (d.note ? '• Remarque : ' + d.note + '\n' : '');
     }
     var msg = 'Bonjour CREATY\n\nJe souhaite commander :\n' + list + '\nTotal : ' + tStr + '\n' + liv + '\nMerci !';
-    var allManga = cart.every(function(x) { return x.g === 'Posters manga'; });
-    ob.href = 'https://wa.me/' + (allManga ? '243824120177' : '243961293567') + '?text=' + encodeURIComponent(msg);
+    // Numéro de la collection (manga, football, game → 0824 120 177) ; panier mixte → 0961 293 567
+    var phones = cart.map(function(x) { return (DATA[x.g] || {}).phone; });
+    var one = phones.every(function(p) { return p && p === phones[0]; });
+    ob.href = 'https://wa.me/' + (one ? phones[0] : '243961293567') + '?text=' + encodeURIComponent(msg);
     ob.classList.remove('pointer-events-none', 'opacity-40');
   } else {
     ob.href = '#';
