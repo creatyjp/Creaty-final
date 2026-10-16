@@ -40,10 +40,10 @@ body{font-family:Arial,sans-serif;background:#0d0d0d}
 #cBd.on{opacity:1;pointer-events:all}
 #toast{opacity:0;transform:translate(-50%,12px);transition:opacity .3s,transform .3s;pointer-events:none}
 #toast.on{opacity:1;transform:translate(-50%,0)}
-#modal{display:none;position:fixed;inset:0;z-index:40;align-items:center;justify-content:center;background:rgba(0,0,0,.7);padding:1rem;overflow-y:auto}
+#modal{display:none;position:fixed;inset:0;z-index:40;align-items:flex-start;justify-content:center;background:rgba(0,0,0,.7);padding:1rem;overflow-y:auto}
 #modal.on{display:flex}
 @keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
-#modalBox{animation:popIn .2s ease}
+#modalBox{margin:auto 0;animation:popIn .2s ease}
 .sg>:nth-child(even){margin-top:2rem}
 @media(min-width:1024px){.sg3>:nth-child(3n+2){margin-top:3rem}.sg3>:nth-child(even){margin-top:0}}
 ::-webkit-scrollbar{width:3px}
@@ -257,15 +257,19 @@ body{font-family:Arial,sans-serif;background:#0d0d0d}
         <p class="text-[8px] font-bold uppercase tracking-[.3em] text-black/40">Voir sur un mur</p>
         <div id="mWallSizes" class="flex gap-1"></div>
       </div>
-      <div id="mWall" class="relative overflow-hidden" style="height:150px;background:linear-gradient(#e9e3d6,#ddd5c4)">
-        <img id="mWallImg" alt="" class="absolute left-1/2 -translate-x-1/2 object-cover shadow-[0_6px_14px_rgba(0,0,0,.35)] transition-all duration-300" style="border:2px solid #fff">
-        <!-- canapé : 200 cm -->
-        <div class="absolute bottom-0 left-1/2 -translate-x-1/2" style="width:66%">
-          <div style="height:18px;background:#3d4a5c;border-radius:10px 10px 0 0"></div>
-          <div style="height:16px;background:#2f3a49"></div>
+      <div id="mWall" class="relative overflow-hidden" style="height:250px;background:linear-gradient(#ece6d9,#ddd5c4)">
+        <img id="mWallImg" alt="" class="absolute left-1/2 -translate-x-1/2 object-cover shadow-[0_8px_18px_rgba(0,0,0,.35)] transition-all duration-300" style="border:2px solid #fff">
+        <!-- canapé de 200 cm (haut du dossier visible), à la même échelle que le poster -->
+        <div id="mSofa" class="absolute bottom-0 left-1/2 -translate-x-1/2 transition-all duration-300">
+          <div id="mSofaBack" style="background:#3d4a5c;border-radius:16px 16px 0 0"></div>
+          <div id="mSofaSeat" style="background:#2f3a49"></div>
+          <div class="mPillow absolute" style="left:31%;background:#c9a66b;transform:rotate(-6deg);border-radius:8px"></div>
+          <div class="mPillow absolute" style="right:31%;background:#e8dcc4;transform:rotate(5deg);border-radius:8px"></div>
         </div>
-        <div class="absolute bottom-0 left-0 right-0" style="height:4px;background:#b9ad96"></div>
-        <span id="mWallLbl" class="absolute right-2 top-2 bg-white/80 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-black/60"></span>
+      </div>
+      <div class="mt-1.5 flex items-center justify-between gap-2">
+        <span id="mWallLbl" class="text-[9px] font-bold uppercase tracking-widest text-black/70"></span>
+        <span class="text-[8px] uppercase tracking-[.2em] text-black/35">Taille réelle · canapé de 2 m</span>
       </div>
     </div>
     <div id="mFrame" class="px-4 pt-4">
@@ -276,8 +280,9 @@ body{font-family:Arial,sans-serif;background:#0d0d0d}
       </div>
     </div>
     <div id="mOptions" class="p-4 space-y-2.5"></div>
-    <div class="px-4 pb-4">
-      <button onclick="closeModal()" class="w-full border border-black/15 py-3 text-[9px] font-bold uppercase tracking-widest text-black/35 hover:border-black/40 transition-all">Annuler</button>
+    <div class="space-y-2 px-4 pb-4">
+      <button id="mAdd" type="button" onclick="addSelected()" class="w-full bg-[#111] py-4 text-[10px] font-bold uppercase tracking-[.2em] text-[#f5f2ea] hover:bg-[#9be619] hover:text-[#111] transition-all">Ajouter ce produit</button>
+      <button onclick="closeModal()" class="w-full border border-black/15 py-3 text-[9px] font-bold uppercase tracking-widest text-black/35 hover:border-[#9be619] hover:bg-[#9be619] hover:text-[#111] transition-all">Annuler</button>
     </div>
   </div>
 </div>
@@ -768,26 +773,48 @@ function observe() {
 // ─── MODAL ───
 // ─── APERÇU SUR UN MUR (tailles réelles, canapé de 200 cm comme repère) ───
 var WALL_SIZES = {A5:[15,21], A4:[21,29.7], A3:[29.7,42], A2:[42,59.4], A1:[59.4,84]};
-var wallFmt = 'A3';
+// Cadrage serré du mur (1,4 m × 1,36 m visibles) : le poster et le canapé sont
+// à la même échelle, assez grande pour bien voir la différence entre formats.
+var WALL_W = 140, WALL_H = 136, SOFA_BACK = 22, SOFA_SEAT = 8, HANG_GAP = 14;
+var wallFmt = 'A3';   // format choisi (sert aussi d'aperçu sur le mur)
+var magSel = 0;       // formule choisie pour les magazines
 function renderWall() {
   if (!modalItem) return;
   var box = document.getElementById('mWall');
-  var scale = box.clientWidth / 300;            // px par cm : le mur visible fait 3 m de large
+  var scale = box.clientWidth / WALL_W;          // px par cm
+  box.style.height = Math.round(WALL_H * scale) + 'px';
+  var sofa = document.getElementById('mSofa');
+  sofa.style.width = Math.round(200 * scale) + 'px';
+  document.getElementById('mSofaBack').style.height = Math.round(SOFA_BACK * scale) + 'px';
+  document.getElementById('mSofaSeat').style.height = Math.round(SOFA_SEAT * scale) + 'px';
+  document.querySelectorAll('.mPillow').forEach(function(p) {   // coussins 36 × 26 cm
+    p.style.width = Math.round(36 * scale) + 'px';
+    p.style.height = Math.round(26 * scale) + 'px';
+    p.style.bottom = Math.round((SOFA_SEAT - 2) * scale) + 'px';
+  });
   var d = WALL_SIZES[wallFmt];
   var img = document.getElementById('mWallImg');
   img.src = thumb(modalItem.img);
   img.style.width = Math.round(d[0] * scale) + 'px';
   img.style.height = Math.round(d[1] * scale) + 'px';
-  img.style.bottom = Math.round(34 + 18 * scale) + 'px'; // accroché ~18 cm au-dessus du canapé
+  img.style.bottom = Math.round((SOFA_BACK + SOFA_SEAT + HANG_GAP) * scale) + 'px'; // accroché 16 cm au-dessus du dossier
   img.style.borderColor = modalFrame ? '#111' : '#fff';
-  img.style.borderWidth = modalFrame ? '4px' : '2px';
+  img.style.borderWidth = modalFrame ? '5px' : '2px';
   document.getElementById('mWallLbl').textContent = wallFmt + ' · ' + d[0] + ' × ' + d[1] + ' cm';
   var chips = '';
   Object.keys(WALL_SIZES).forEach(function(f) {
-    chips += '<button type="button" onclick="wallFmt=\'' + f + '\';renderWall()" class="px-2 py-1 text-[9px] font-bold '
-      + (f === wallFmt ? 'bg-[#111] text-[#f5f2ea]' : 'text-black/45 hover:text-black') + '">' + f + '</button>';
+    chips += '<button type="button" onclick="pickFormat(\'' + f + '\')" class="px-2 py-1 text-[9px] font-bold transition-all '
+      + (f === wallFmt ? 'bg-[#9be619] text-[#111]' : 'text-black/45 hover:bg-[#9be619] hover:text-[#111]') + '">' + f + '</button>';
   });
   document.getElementById('mWallSizes').innerHTML = chips;
+}
+
+// Choisir un format : il s'affiche sur le mur, puis « Ajouter ce produit » l'ajoute au panier.
+function pickFormat(key) {
+  if (modalItem && modalItem.g === 'Magazines') magSel = +key;
+  else wallFmt = key;
+  renderModalOptions();
+  renderWall();
 }
 
 function openModal(btn) {
@@ -801,6 +828,7 @@ function openModal(btn) {
   document.getElementById('mWallBox').classList.toggle('hidden', isMag);
   modalFrame = false;
   wallFmt = 'A3';
+  magSel = 0;
   renderModalOptions();
   requestAnimationFrame(renderWall);
   document.getElementById('modal').classList.add('on');
@@ -828,22 +856,41 @@ function renderModalOptions() {
 
   var html = '';
   for (var i = 0; i < opts.length; i++) {
-    var o = opts[i];
-    var price = fr ? o.cadre : o.price;
-    var unit = fr ? 'FC' : o.unit;
-    var fmt = fr ? o.fmt + ' + cadre' : o.fmt;
-    var desc = fr ? o.desc + ' · cadre inclus' : o.desc;
-    var pcolor = unit === '$' ? ' style="color:#16a34a"' : '';
-    // Survoler un format le montre sur le mur
-    var hov = WALL_SIZES[o.fmt] ? ' onmouseenter="wallFmt=\'' + o.fmt + '\';renderWall()"' : '';
-    html += '<button data-fmt="' + fmt + '" data-price="' + price + '" data-unit="' + unit + '" onclick="selectFormat(this)"' + hov
-      + ' class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5 transition-all">'
-      + '<div><p class="fd text-sm font-black">' + o.label + '</p>'
-      + '<p class="mt-0.5 text-[9px] text-black/45">' + desc + '</p></div>'
-      + '<span class="fd text-base font-black"' + pcolor + '>' + priceStr(price, unit) + '</span>'
+    var o = optionData(opts[i], fr);
+    var key = isMag ? String(i) : opts[i].fmt;
+    var sel = isMag ? i === magSel : opts[i].fmt === wallFmt;
+    var cls = sel
+      ? 'border-[#9be619] bg-[#9be619] text-[#111]'
+      : 'border-black/15 hover:border-[#9be619] hover:bg-[#9be619] hover:text-[#111]';
+    var pcls = o.unit === '$' && !sel ? 'text-[#16a34a] group-hover:text-[#111]' : '';
+    html += '<button type="button" onclick="pickFormat(\'' + key + '\')" aria-pressed="' + sel + '"'
+      + ' class="group flex w-full items-center justify-between border p-4 text-left transition-all ' + cls + '">'
+      + '<div><p class="fd text-sm font-black">' + (sel ? '&#10003; ' : '') + opts[i].label + '</p>'
+      + '<p class="mt-0.5 text-[9px] text-black/50">' + o.desc + '</p></div>'
+      + '<span class="fd text-base font-black ' + pcls + '">' + priceStr(o.price, o.unit) + '</span>'
       + '</button>';
   }
   document.getElementById('mOptions').innerHTML = html;
+  var cur = currentOption();
+  document.getElementById('mAdd').textContent = 'Ajouter ce produit · ' + cur.fmt + ' · ' + priceStr(cur.price, cur.unit);
+}
+
+// Prix, unité et libellé d'une option (avec ou sans cadre)
+function optionData(o, fr) {
+  return {
+    fmt: fr ? o.fmt + ' + cadre' : o.fmt,
+    price: fr ? o.cadre : o.price,
+    unit: fr ? 'FC' : o.unit,
+    desc: fr ? o.desc + ' · cadre inclus' : o.desc
+  };
+}
+
+// Option actuellement choisie dans la fenêtre
+function currentOption() {
+  var isMag = modalItem.g === 'Magazines';
+  if (isMag) return optionData(FORMATS_MAG[magSel] || FORMATS_MAG[0], false);
+  var o = FORMATS_DEFAULT.filter(function(x) { return x.fmt === wallFmt; })[0] || FORMATS_DEFAULT[2];
+  return optionData(o, modalFrame);
 }
 
 function closeModal() {
@@ -858,11 +905,10 @@ document.getElementById('modal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
 
-function selectFormat(btn) {
+function addSelected() {
   if (!modalItem) return;
-  var fmt = btn.dataset.fmt;
-  var price = parseInt(btn.dataset.price);
-  var unit = btn.dataset.unit || 'FC';
+  var cur = currentOption();
+  var fmt = cur.fmt, price = cur.price, unit = cur.unit;
   // Même poster, même format : on augmente la quantité
   var same = cart.filter(function(x) { return x.nm === modalItem.nm && x.fmt === fmt; })[0];
   if (same) same.qty = (same.qty || 1) + 1;
