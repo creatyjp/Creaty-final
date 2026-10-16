@@ -15,7 +15,14 @@
 <meta property="og:image:height" content="1350"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://creatyjp.github.io/Creaty-final/images/apercu-vertical.jpg"/>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="theme-color" content="#0d0d0d"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230d0d0d'/%3E%3Ctext x='32' y='44' font-family='Arial Black,Arial' font-size='30' font-weight='900' text-anchor='middle' fill='%239be619'%3EJP%3C/text%3E%3C/svg%3E"/>
+<!-- CSS Tailwind précompilé (plus de compilation dans le navigateur : site bien plus rapide).
+     Après avoir ajouté des classes : npx tailwindcss@3 -i tailwind.in.css -o styles.css --content ./index.html --minify -->
+<link rel="stylesheet" href="styles.css"/>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Store","name":"JP CREATY","description":"Posters sur mesure à Kinshasa : manga, musique, football, magazines. Livraison partout à Kinshasa, paiement à la livraison.","url":"https://creatyjp.github.io/Creaty-final/","image":"https://creatyjp.github.io/Creaty-final/images/apercu-vertical.jpg","telephone":"+243824120177","address":{"@type":"PostalAddress","addressLocality":"Kinshasa","addressCountry":"CD"},"areaServed":"Kinshasa","paymentAccepted":"Paiement à la livraison","priceRange":"2 500 FC – 40 000 FC"}
+</script>
 <style>
 html{scroll-behavior:smooth}
 body{font-family:Arial,sans-serif;background:#0d0d0d}
@@ -62,7 +69,7 @@ body{font-family:Arial,sans-serif;background:#0d0d0d}
 </div>
 
 <!-- HEADER -->
-<header class="sticky top-0 z-10 border-b border-white/10 bg-[#0d0d0d]/92 backdrop-blur-md">
+<header class="sticky top-0 z-10 border-b border-white/10 bg-[#0d0d0d]/90 backdrop-blur-md">
   <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
     <a href="#top" class="fd text-2xl font-black tracking-[-0.12em]">JP CREATY</a>
     <nav class="hidden gap-8 text-[10px] font-bold uppercase tracking-[.2em] md:flex">
@@ -209,9 +216,22 @@ body{font-family:Arial,sans-serif;background:#0d0d0d}
       <span class="text-[10px] font-bold uppercase tracking-widest text-black/50">Total estime</span>
       <span id="cTotalPrice" class="fd text-lg font-black">0 FC</span>
     </div>
+    <!-- Livraison : ajoutée au message WhatsApp (moins d'allers-retours) -->
+    <div class="mt-4 space-y-2">
+      <p class="text-[9px] font-bold uppercase tracking-[.25em] text-black/45">Livraison</p>
+      <input id="dName" type="text" maxlength="60" placeholder="Votre nom *" oninput="saveDelivery()"
+        class="w-full border border-black/15 bg-white px-3 py-2.5 text-[13px] outline-none focus:border-[#111]">
+      <select id="dCommune" onchange="saveDelivery()"
+        class="w-full border border-black/15 bg-white px-3 py-2.5 text-[13px] outline-none focus:border-[#111]"></select>
+      <input id="dAddress" type="text" maxlength="120" placeholder="Quartier, avenue, repère" oninput="saveDelivery()"
+        class="w-full border border-black/15 bg-white px-3 py-2.5 text-[13px] outline-none focus:border-[#111]">
+      <input id="dNote" type="text" maxlength="160" placeholder="Remarque (date souhaitée, cadeau…)" oninput="saveDelivery()"
+        class="w-full border border-black/15 bg-white px-3 py-2.5 text-[13px] outline-none focus:border-[#111]">
+      <p id="dError" class="hidden text-[11px] font-bold text-red-600">Indiquez votre nom et votre commune.</p>
+    </div>
   </div>
   <div class="border-t border-black/10 px-6 pb-6 pt-4 space-y-3">
-    <a id="cOrder" href="#" class="block bg-[#111] py-4 text-center text-[9px] font-bold uppercase tracking-[.25em] text-white hover:bg-[#9be619] hover:text-[#111] transition-all">Commander sur WhatsApp</a>
+    <a id="cOrder" href="#" onclick="return checkDelivery()" class="block bg-[#111] py-4 text-center text-[9px] font-bold uppercase tracking-[.25em] text-white hover:bg-[#9be619] hover:text-[#111] transition-all">Commander sur WhatsApp</a>
     <button onclick="clearCart()" class="block w-full border border-black/15 py-2.5 text-center text-[9px] font-bold uppercase tracking-widest text-black/35 hover:text-black/60 transition-all">Vider le sac</button>
   </div>
 </aside>
@@ -228,6 +248,23 @@ body{font-family:Arial,sans-serif;background:#0d0d0d}
         <p id="mName" class="fd text-base font-black leading-tight"></p>
       </div>
       <button onclick="closeModal()" class="text-xl leading-none text-black/25 hover:text-black/60">&#x2715;</button>
+    </div>
+    <!-- Aperçu à taille réelle sur un mur (canapé de 2 m comme repère) -->
+    <div id="mWallBox" class="px-4 pt-4">
+      <div class="mb-2 flex items-center justify-between">
+        <p class="text-[8px] font-bold uppercase tracking-[.3em] text-black/40">Voir sur un mur</p>
+        <div id="mWallSizes" class="flex gap-1"></div>
+      </div>
+      <div id="mWall" class="relative overflow-hidden" style="height:150px;background:linear-gradient(#e9e3d6,#ddd5c4)">
+        <img id="mWallImg" alt="" class="absolute left-1/2 -translate-x-1/2 object-cover shadow-[0_6px_14px_rgba(0,0,0,.35)] transition-all duration-300" style="border:2px solid #fff">
+        <!-- canapé : 200 cm -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2" style="width:66%">
+          <div style="height:18px;background:#3d4a5c;border-radius:10px 10px 0 0"></div>
+          <div style="height:16px;background:#2f3a49"></div>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0" style="height:4px;background:#b9ad96"></div>
+        <span id="mWallLbl" class="absolute right-2 top-2 bg-white/80 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-black/60"></span>
+      </div>
     </div>
     <div id="mFrame" class="px-4 pt-4">
       <p class="mb-2 text-[8px] font-bold uppercase tracking-[.3em] text-black/40">Finition</p>
@@ -247,6 +284,25 @@ body{font-family:Arial,sans-serif;background:#0d0d0d}
 <div id="toast" class="fixed bottom-6 left-1/2 z-50 flex max-w-xs items-center gap-3 bg-[#9be619] px-5 py-3 text-[9px] font-bold uppercase tracking-[.15em] text-[#111] shadow-xl">
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
   <span id="toastTxt"></span>
+</div>
+
+<!-- VUE AGRANDIE -->
+<div id="lb" class="fixed inset-0 z-[70] hidden flex-col bg-black/95 p-4" onclick="if(event.target===this)closeLightbox()">
+  <div class="mx-auto flex w-full max-w-md items-center justify-between py-2">
+    <p id="lbGroup" class="text-[9px] font-bold uppercase tracking-[.3em] text-[#9be619]"></p>
+    <button onclick="closeLightbox()" aria-label="Fermer" class="text-2xl leading-none text-white/60 hover:text-white">&#x2715;</button>
+  </div>
+  <div class="mx-auto flex min-h-0 w-full max-w-md flex-1 items-center justify-center">
+    <img id="lbImg" alt="" class="max-h-full max-w-full object-contain shadow-2xl">
+  </div>
+  <div class="mx-auto w-full max-w-md pt-3">
+    <p id="lbName" class="fd mb-3 text-lg font-black uppercase leading-tight text-[#f5f2ea]"></p>
+    <div class="grid grid-cols-[1fr_auto_auto] gap-2">
+      <button id="lbAdd" class="bg-[#9be619] py-3.5 text-[10px] font-bold uppercase tracking-[.2em] text-[#111]">+ Ajouter au panier</button>
+      <button id="lbFav" aria-label="Favori" class="border border-white/25 px-4 text-lg text-white hover:border-[#9be619]">&#9825;</button>
+      <button id="lbShare" class="border border-white/25 px-4 text-[10px] font-bold uppercase tracking-widest text-white hover:border-[#9be619]">Partager</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -511,18 +567,69 @@ function fc(n) {
 function priceStr(price, unit) {
   return unit === '$' ? price + '$' : fc(price);
 }
+function esc(s) { return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+// Miniature légère (WebP ~45 Ko) pour les grilles ; l'original reste pour la vue agrandie.
+function thumb(img) {
+  return img.indexOf(LP) === 0 ? LP + 'thumbs/' + img.slice(LP.length).replace(/\.(jpe?g|png)$/i, '.webp') : img;
+}
+
+// Mémoire du navigateur (sac, favoris, livraison) — protégée si indisponible.
+function load(k, d) { try { var v = localStorage.getItem('creaty_' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+function store(k, v) { try { localStorage.setItem('creaty_' + k, JSON.stringify(v)); } catch (e) {} }
+
+// Favoris
+var favs = load('favs', []);
+function isFav(nm) { return favs.indexOf(nm) !== -1; }
+function toggleFav(nm) {
+  var i = favs.indexOf(nm);
+  if (i === -1) { favs.push(nm); showToast('Ajouté aux favoris'); } else { favs.splice(i, 1); }
+  store('favs', favs);
+  if (activeFilter === 'Favoris' && !favs.length) activeFilter = 'Tout';
+  render();
+  if (document.getElementById('lb').classList.contains('flex')) document.getElementById('lbFav').innerHTML = isFav(nm) ? '&#9829;' : '&#9825;';
+}
+// Retrouve un poster par son nom dans tout le catalogue
+function findPoster(nm) {
+  var gs = Object.keys(DATA);
+  for (var g = 0; g < gs.length; g++) {
+    var all = DATA[gs[g]].items.concat(DATA[gs[g]].extra);
+    for (var i = 0; i < all.length; i++) if (all[i].name === nm) return {item: all[i], group: gs[g], accent: DATA[gs[g]].accent};
+  }
+  return null;
+}
+
+// Les 24 communes de Kinshasa
+var COMMUNES = ['Bandalungwa','Barumbu','Bumbu','Gombe','Kalamu','Kasa-Vubu','Kimbanseke','Kinshasa','Kintambo','Kisenso','Lemba','Limete','Lingwala','Makala','Maluku','Masina','Matete','Mont-Ngafula','Ndjili','Ngaba','Ngaliema','Ngiri-Ngiri','Nsele','Selembao'];
 
 // ─── RENDER ───
 function render() {
   var keys = ['Tout'].concat(Object.keys(DATA));
+  if (favs.length) keys.push('Favoris');
   var html = '';
   for (var i = 0; i < keys.length; i++) {
     var k = keys[i];
     var active = activeFilter === k;
     var cls = active ? 'border-[#9be619] bg-[#9be619] text-[#111]' : 'border-white/20 text-white/50 hover:border-white/60 hover:text-white';
-    html += '<button data-f="' + k + '" onclick="setFilter(this.dataset.f)" class="whitespace-nowrap border px-5 py-2.5 text-[9px] font-bold uppercase tracking-[.2em] transition-all ' + cls + '">' + k + '</button>';
+    var lbl = k === 'Favoris' ? '&#9829; Favoris (' + favs.length + ')' : k;
+    html += '<button data-f="' + k + '" onclick="setFilter(this.dataset.f)" class="whitespace-nowrap border px-5 py-2.5 text-[9px] font-bold uppercase tracking-[.2em] transition-all ' + cls + '">' + lbl + '</button>';
   }
   document.getElementById('filters').innerHTML = html;
+
+  // Favoris : une seule grille avec les posters aimés
+  if (activeFilter === 'Favoris') {
+    var cards = '';
+    favs.forEach(function(nm) {
+      var f = findPoster(nm);
+      if (f) cards += buildCard(f.item, f.group, A[f.accent]);
+    });
+    document.getElementById('collections').innerHTML =
+      '<section class="mb-16"><div class="mb-8 border-b border-white/10 pb-5"><p class="mb-2 text-[9px] font-bold uppercase tracking-[.3em] text-white/30">Votre sélection</p>'
+      + '<h3 class="fd font-black leading-[.85] tracking-[-0.06em]" style="font-size:clamp(2rem,5vw,3.5rem)">MES FAVORIS</h3></div>'
+      + '<div class="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">' + cards + '</div></section>';
+    requestAnimationFrame(observe);
+    return;
+  }
 
   var groups = activeFilter === 'Tout' ? Object.keys(DATA) : [activeFilter];
   var sectHtml = '';
@@ -572,9 +679,14 @@ function buildSection(g) {
 function buildCard(it, g, ac) {
   var img = it.img.replace(/"/g, '&quot;');
   var nm = it.name.replace(/"/g, '&quot;');
+  var fav = isFav(it.name);
   return '<article class="card rv group min-w-0">'
-    + '<div class="aspect-[3/4] overflow-hidden bg-[#1a1a1a]">'
-    + '<img class="ci h-full w-full object-cover" src="' + img + '" alt="' + nm + '" loading="lazy">'
+    + '<div class="relative aspect-[3/4] overflow-hidden bg-[#1a1a1a]">'
+    + '<img class="ci h-full w-full cursor-zoom-in object-cover" src="' + thumb(img) + '" alt="' + nm + '" loading="lazy" decoding="async"'
+    + ' data-group="' + g + '" data-name="' + nm + '" data-img="' + img + '" onclick="openLightbox(this)">'
+    + '<button data-name="' + nm + '" onclick="toggleFav(this.dataset.name)" aria-label="Favori"'
+    + ' class="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/55 text-base leading-none '
+    + (fav ? 'text-[#ff4d6d]' : 'text-white/80') + ' backdrop-blur-sm hover:scale-110 transition-transform">' + (fav ? '&#9829;' : '&#9825;') + '</button>'
     + '</div>'
     + '<div class="mt-2.5 space-y-2">'
     + '<p class="text-[10px] font-bold uppercase leading-tight">' + it.name + '</p>'
@@ -614,16 +726,43 @@ function observe() {
 }
 
 // ─── MODAL ───
+// ─── APERÇU SUR UN MUR (tailles réelles, canapé de 200 cm comme repère) ───
+var WALL_SIZES = {A5:[15,21], A4:[21,29.7], A3:[29.7,42], A2:[42,59.4], A1:[59.4,84]};
+var wallFmt = 'A3';
+function renderWall() {
+  if (!modalItem) return;
+  var box = document.getElementById('mWall');
+  var scale = box.clientWidth / 300;            // px par cm : le mur visible fait 3 m de large
+  var d = WALL_SIZES[wallFmt];
+  var img = document.getElementById('mWallImg');
+  img.src = thumb(modalItem.img);
+  img.style.width = Math.round(d[0] * scale) + 'px';
+  img.style.height = Math.round(d[1] * scale) + 'px';
+  img.style.bottom = Math.round(34 + 18 * scale) + 'px'; // accroché ~18 cm au-dessus du canapé
+  img.style.borderColor = modalFrame ? '#111' : '#fff';
+  img.style.borderWidth = modalFrame ? '4px' : '2px';
+  document.getElementById('mWallLbl').textContent = wallFmt + ' · ' + d[0] + ' × ' + d[1] + ' cm';
+  var chips = '';
+  Object.keys(WALL_SIZES).forEach(function(f) {
+    chips += '<button type="button" onclick="wallFmt=\'' + f + '\';renderWall()" class="px-2 py-1 text-[9px] font-bold '
+      + (f === wallFmt ? 'bg-[#111] text-[#f5f2ea]' : 'text-black/45 hover:text-black') + '">' + f + '</button>';
+  });
+  document.getElementById('mWallSizes').innerHTML = chips;
+}
+
 function openModal(btn) {
   modalItem = {g: btn.dataset.group, nm: btn.dataset.name, img: btn.dataset.img};
-  document.getElementById('mImg').src = modalItem.img;
+  document.getElementById('mImg').src = thumb(modalItem.img);
   document.getElementById('mName').textContent = modalItem.nm;
 
   var isMag = modalItem.g === 'Magazines';
   document.getElementById('mLabel').textContent = isMag ? 'Choisir votre formule' : 'Choisir votre format';
   document.getElementById('mFrame').classList.toggle('hidden', isMag);
+  document.getElementById('mWallBox').classList.toggle('hidden', isMag);
   modalFrame = false;
+  wallFmt = 'A3';
   renderModalOptions();
+  requestAnimationFrame(renderWall);
   document.getElementById('modal').classList.add('on');
   document.body.style.overflow = 'hidden';
 }
@@ -633,6 +772,7 @@ var modalFrame = false;
 function setFrame(on) {
   modalFrame = on;
   renderModalOptions();
+  renderWall();
 }
 
 function renderModalOptions() {
@@ -654,7 +794,9 @@ function renderModalOptions() {
     var fmt = fr ? o.fmt + ' + cadre' : o.fmt;
     var desc = fr ? o.desc + ' · cadre inclus' : o.desc;
     var pcolor = unit === '$' ? ' style="color:#16a34a"' : '';
-    html += '<button data-fmt="' + fmt + '" data-price="' + price + '" data-unit="' + unit + '" onclick="selectFormat(this)"'
+    // Survoler un format le montre sur le mur
+    var hov = WALL_SIZES[o.fmt] ? ' onmouseenter="wallFmt=\'' + o.fmt + '\';renderWall()"' : '';
+    html += '<button data-fmt="' + fmt + '" data-price="' + price + '" data-unit="' + unit + '" onclick="selectFormat(this)"' + hov
       + ' class="flex w-full items-center justify-between border border-black/15 p-4 text-left hover:border-[#9be619] hover:bg-[#9be619]/5 transition-all">'
       + '<div><p class="fd text-sm font-black">' + o.label + '</p>'
       + '<p class="mt-0.5 text-[9px] text-black/45">' + desc + '</p></div>'
@@ -681,7 +823,10 @@ function selectFormat(btn) {
   var fmt = btn.dataset.fmt;
   var price = parseInt(btn.dataset.price);
   var unit = btn.dataset.unit || 'FC';
-  cart.push({g: modalItem.g, nm: modalItem.nm, img: modalItem.img, fmt: fmt, price: price, unit: unit});
+  // Même poster, même format : on augmente la quantité
+  var same = cart.filter(function(x) { return x.nm === modalItem.nm && x.fmt === fmt; })[0];
+  if (same) same.qty = (same.qty || 1) + 1;
+  else cart.push({g: modalItem.g, nm: modalItem.nm, img: modalItem.img, fmt: fmt, price: price, unit: unit, qty: 1});
   syncCart();
   showToast(modalItem.nm + ' — ' + fmt + ' · ' + priceStr(price, unit));
   closeModal();
@@ -690,56 +835,102 @@ function selectFormat(btn) {
 // ─── CART ───
 function removeItem(i) { cart.splice(i, 1); syncCart(); }
 function clearCart() { cart = []; syncCart(); }
+function changeQty(i, d) {
+  var it = cart[i]; if (!it) return;
+  it.qty = Math.max(1, Math.min(20, (it.qty || 1) + d));
+  syncCart();
+}
+
+// ─── LIVRAISON (mémorisée pour la prochaine commande) ───
+function saveDelivery() {
+  store('delivery', {
+    name: document.getElementById('dName').value,
+    commune: document.getElementById('dCommune').value,
+    address: document.getElementById('dAddress').value,
+    note: document.getElementById('dNote').value
+  });
+  document.getElementById('dError').classList.add('hidden');
+  syncCart();
+}
+function initDelivery() {
+  var sel = document.getElementById('dCommune');
+  sel.innerHTML = '<option value="">Commune *</option>' + COMMUNES.map(function(c) { return '<option>' + c + '</option>'; }).join('');
+  var d = load('delivery', {});
+  document.getElementById('dName').value = d.name || '';
+  sel.value = d.commune || '';
+  document.getElementById('dAddress').value = d.address || '';
+  document.getElementById('dNote').value = d.note || '';
+}
+function checkDelivery() {
+  if (!cart.length) return false;
+  var ok = document.getElementById('dName').value.trim() && document.getElementById('dCommune').value;
+  document.getElementById('dError').classList.toggle('hidden', !!ok);
+  if (!ok) document.getElementById(document.getElementById('dName').value.trim() ? 'dCommune' : 'dName').focus();
+  return !!ok;
+}
 
 function syncCart() {
-  var n = cart.length;
+  store('cart', cart);
+  var n = cart.reduce(function(t, x) { return t + (x.qty || 1); }, 0);
   var cc = document.getElementById('cartCount');
   cc.textContent = n;
   cc.classList.toggle('hidden', n === 0);
   document.getElementById('cTotal').textContent = '(' + n + ')';
 
   var box = document.getElementById('cItems');
-  if (n === 0) {
+  if (cart.length === 0) {
     box.innerHTML = '<div class="py-14 text-center text-sm text-black/25 leading-relaxed">Votre sac est vide.<br>Parcourez la collection !</div>';
   } else {
     var html = '';
     for (var i = 0; i < cart.length; i++) {
-      var it = cart[i];
-      html += '<div class="flex items-center gap-3 border-b border-black/8 py-3">'
+      var it = cart[i], q = it.qty || 1;
+      html += '<div class="flex items-center gap-3 border-b border-black/10 py-3">'
         + '<div class="h-16 w-11 shrink-0 overflow-hidden bg-black/5">'
-        + '<img src="' + it.img + '" class="h-full w-full object-cover" loading="lazy" alt="' + it.nm + '"></div>'
+        + '<img src="' + esc(thumb(it.img)) + '" class="h-full w-full object-cover" loading="lazy" alt="' + esc(it.nm) + '"></div>'
         + '<div class="flex-1 min-w-0">'
-        + '<p class="truncate text-[11px] font-bold">' + it.nm + '</p>'
-        + '<p class="text-[9px] text-black/40 mt-0.5 uppercase tracking-widest">' + it.g + '</p>'
-        + '<p class="text-[10px] font-black text-[#111] mt-0.5">' + it.fmt + ' · ' + priceStr(it.price, it.unit) + '</p>'
-        + '</div>'
-        + '<button onclick="removeItem(' + i + ')" class="shrink-0 text-xl leading-none text-black/20 hover:text-black/70 transition-colors">&#x2715;</button>'
+        + '<p class="truncate text-[11px] font-bold">' + esc(it.nm) + '</p>'
+        + '<p class="text-[9px] text-black/40 mt-0.5 uppercase tracking-widest">' + esc(it.g) + '</p>'
+        + '<p class="text-[10px] font-black text-[#111] mt-0.5">' + esc(it.fmt) + ' · ' + priceStr(it.price * q, it.unit) + '</p>'
+        + '<div class="mt-1.5 inline-flex items-center border border-black/15">'
+        + '<button onclick="changeQty(' + i + ',-1)" aria-label="Moins" class="h-6 w-7 text-sm font-black text-black/50 hover:text-black">−</button>'
+        + '<span class="w-6 text-center text-[11px] font-black">' + q + '</span>'
+        + '<button onclick="changeQty(' + i + ',1)" aria-label="Plus" class="h-6 w-7 text-sm font-black text-black/50 hover:text-black">+</button>'
+        + '</div></div>'
+        + '<button onclick="removeItem(' + i + ')" aria-label="Retirer" class="shrink-0 text-xl leading-none text-black/20 hover:text-black/70 transition-colors">&#x2715;</button>'
         + '</div>';
     }
     box.innerHTML = html;
   }
 
-  // Total
+  // Total (francs et dollars séparés)
   var fcTotal = 0, dolTotal = 0;
   for (var j = 0; j < cart.length; j++) {
-    if (cart[j].unit === '$') dolTotal += cart[j].price;
-    else fcTotal += cart[j].price;
+    var line = cart[j].price * (cart[j].qty || 1);
+    if (cart[j].unit === '$') dolTotal += line; else fcTotal += line;
   }
-  document.getElementById('cSummary').classList.toggle('hidden', n === 0);
+  document.getElementById('cSummary').classList.toggle('hidden', cart.length === 0);
   var tStr = fcTotal > 0 ? fc(fcTotal) : '';
   if (dolTotal > 0) tStr += (tStr ? ' + ' : '') + dolTotal + '$';
   document.getElementById('cTotalPrice').textContent = tStr || '0 FC';
 
-  // WhatsApp order link
+  // Lien WhatsApp : liste, total et livraison
   var ob = document.getElementById('cOrder');
-  if (n > 0) {
+  if (cart.length > 0) {
     var list = '';
     for (var k = 0; k < cart.length; k++) {
-      var ct = cart[k];
-      list += (k + 1) + '. ' + ct.nm + ' (' + ct.fmt + ' — ' + priceStr(ct.price, ct.unit) + ')\n';
+      var ct = cart[k], qq = ct.qty || 1;
+      list += (k + 1) + '. ' + ct.nm + ' — ' + ct.fmt + (qq > 1 ? ' × ' + qq : '') + ' (' + priceStr(ct.price * qq, ct.unit) + ')\n';
     }
-    var tStrMsg = (fcTotal > 0 ? fc(fcTotal) : '') + (dolTotal > 0 ? (fcTotal > 0 ? ' + ' : '') + dolTotal + '$' : '');
-    var msg = 'Bonjour CREATY\n\nJe souhaite commander :\n' + list + '\nTotal : ' + tStrMsg + '\n\nMerci !';
+    var d = load('delivery', {});
+    var liv = '';
+    if (d.name || d.commune || d.address) {
+      liv = '\nLivraison :\n'
+        + (d.name ? '• Nom : ' + d.name + '\n' : '')
+        + (d.commune ? '• Commune : ' + d.commune + '\n' : '')
+        + (d.address ? '• Adresse : ' + d.address + '\n' : '')
+        + (d.note ? '• Remarque : ' + d.note + '\n' : '');
+    }
+    var msg = 'Bonjour CREATY\n\nJe souhaite commander :\n' + list + '\nTotal : ' + tStr + '\n' + liv + '\nMerci !';
     var allManga = cart.every(function(x) { return x.g === 'Posters manga'; });
     ob.href = 'https://wa.me/' + (allManga ? '243824120177' : '243961293567') + '?text=' + encodeURIComponent(msg);
     ob.classList.remove('pointer-events-none', 'opacity-40');
@@ -756,6 +947,8 @@ function toggleCart() {
   var open = c.classList.contains('open');
   c.classList.toggle('open', !open);
   bd.classList.toggle('on', !open);
+  // Le bouton de l'IA ne doit pas cacher le bas du sac
+  var cb = document.getElementById('chatBtn'); if (cb) cb.style.display = open ? '' : 'none';
   document.body.style.overflow = open ? '' : 'hidden';
 }
 
@@ -826,7 +1019,8 @@ function handleSearch(val) {
       var nm = f.item.name.replace(/"/g, '&quot;');
       grid += '<article class="card group min-w-0">'
         + '<div class="aspect-[3/4] overflow-hidden bg-[#1a1a1a]">'
-        + '<img class="ci h-full w-full object-cover" src="' + img + '" alt="' + nm + '" loading="lazy">'
+        + '<img class="ci h-full w-full cursor-zoom-in object-cover" src="' + thumb(img) + '" alt="' + nm + '" loading="lazy" decoding="async"'
+        + ' data-group="' + f.group + '" data-name="' + nm + '" data-img="' + img + '" onclick="openLightbox(this)">'
         + '</div>'
         + '<div class="mt-2.5 space-y-1.5">'
         + '<p class="text-[9px] font-bold uppercase tracking-widest text-white/30">' + f.group + '</p>'
@@ -849,10 +1043,49 @@ function clearSearch() {
   document.getElementById('searchInput').focus();
 }
 
+// ─── VUE AGRANDIE ───
+function openLightbox(el) {
+  var g = el.dataset.group, nm = el.dataset.name, img = el.dataset.img;
+  var lb = document.getElementById('lb');
+  document.getElementById('lbImg').src = img;
+  document.getElementById('lbImg').alt = nm;
+  document.getElementById('lbName').textContent = nm;
+  document.getElementById('lbGroup').textContent = g;
+  document.getElementById('lbFav').innerHTML = isFav(nm) ? '&#9829;' : '&#9825;';
+  document.getElementById('lbFav').onclick = function() { toggleFav(nm); };
+  document.getElementById('lbAdd').onclick = function() { closeLightbox(); openModal(el); };
+  document.getElementById('lbShare').onclick = function() { sharePoster(nm); };
+  lb.classList.remove('hidden'); lb.classList.add('flex');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  var lb = document.getElementById('lb');
+  lb.classList.add('hidden'); lb.classList.remove('flex');
+  document.body.style.overflow = '';
+}
+// Partage : lien qui ouvre le site directement sur ce poster
+function sharePoster(nm) {
+  var url = location.origin + location.pathname + '?poster=' + encodeURIComponent(nm);
+  var text = 'Regarde ce poster chez JP CREATY : ' + nm;
+  if (navigator.share) { navigator.share({title: nm, text: text, url: url}).catch(function(){}); return; }
+  window.open('https://wa.me/?text=' + encodeURIComponent(text + '\n' + url), '_blank');
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
+
 // ─── INIT ───
+cart = load('cart', []).filter(function(x) { return x && x.nm && x.fmt; });
+initDelivery();
 render();
 syncCart();
 observe();
+(function() {
+  var p = new URLSearchParams(location.search).get('poster');
+  if (!p) return;
+  var input = document.getElementById('searchInput');
+  input.value = p;
+  handleSearch(p);
+  document.getElementById('shop').scrollIntoView();
+})();
 </script>
 
 
@@ -1019,7 +1252,7 @@ function aiOpen(q) {
   x.classList.add('on');
   document.body.style.overflow = 'hidden';
   document.getElementById('chatBadge').style.display = 'none';
-  document.getElementById('aiCartN').textContent = cart.length;
+  document.getElementById('aiCartN').textContent = document.getElementById('cartCount').textContent;
   if (!document.getElementById('aiSugs').children.length) aiRenderSugs();
   if (q) aiSend(q);
   setTimeout(function(){ document.getElementById('aiInput').focus(); }, 250);
@@ -1074,7 +1307,7 @@ function aiAddBot(text) {
     posters.forEach(function(f) {
       var ac = A[f.accent], img = aiEsc(f.item.img), nm = aiEsc(f.item.name);
       cards += '<div style="width:136px" class="shrink-0">'
-        + '<div class="aspect-[3/4] overflow-hidden rounded-xl bg-[#1a1a1a]"><img src="' + img + '" alt="' + nm + '" class="h-full w-full object-cover" loading="lazy"></div>'
+        + '<div class="aspect-[3/4] overflow-hidden rounded-xl bg-[#1a1a1a]"><img src="' + thumb(img) + '" alt="' + nm + '" class="h-full w-full object-cover" loading="lazy"></div>'
         + '<p class="mt-2 text-[10px] font-bold uppercase leading-tight">' + nm + '</p>'
         + '<p class="text-[9px] uppercase tracking-widest text-white/35">' + aiEsc(f.group) + '</p>'
         + '<button data-group="' + aiEsc(f.group) + '" data-name="' + nm + '" data-img="' + img + '" onclick="openModal(this)" class="mt-2 w-full rounded-full py-2 text-[9px] font-bold uppercase tracking-widest ' + ac.btn + '">+ Ajouter</button>'
@@ -1142,7 +1375,7 @@ function aiCall() {
 
 // Compteur du sac synchronisé dans l'interface IA
 var _syncCartBase = syncCart;
-syncCart = function() { _syncCartBase(); var n = document.getElementById('aiCartN'); if (n) n.textContent = cart.length; };
+syncCart = function() { _syncCartBase(); var n = document.getElementById('aiCartN'); if (n) n.textContent = document.getElementById('cartCount').textContent; };
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape' && document.getElementById('aiX').classList.contains('on') && !document.getElementById('modal').classList.contains('on')) aiClose();

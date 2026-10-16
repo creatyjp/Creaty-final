@@ -9,9 +9,13 @@ const MAX_BODY = 100000;
 const ALLOWED_ORIGINS = ['https://creatyjp.github.io'];
 
 export default async (req) => {
-  // Refuse les appels venant d'autres sites
+  // Refuse les appels venant d'autres sites (et les appels sans origine,
+  // ex. scripts : le navigateur envoie toujours l'origine du site).
   const origin = req.headers.get('origin');
-  const allowed = !origin || ALLOWED_ORIGINS.includes(origin) || new URL(origin).host === new URL(req.url).host;
+  let allowed = false;
+  try {
+    allowed = !!origin && (ALLOWED_ORIGINS.includes(origin) || new URL(origin).host === new URL(req.url).host);
+  } catch { allowed = false; }
   const cors = origin && allowed
     ? { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Vary': 'Origin' }
     : {};
@@ -33,6 +37,11 @@ export default async (req) => {
 
   let body;
   try { body = JSON.parse(raw); } catch { return json(400, { error: { code: 400, message: 'JSON invalide' } }); }
+
+  // Seul l'assistant CREATY IA peut être utilisé (pas de détournement de la clé
+  // pour d'autres usages avec des consignes arbitraires).
+  const sys = body.systemInstruction?.parts?.[0]?.text ?? '';
+  if (!sys.startsWith('Tu es CREATY IA')) return json(403, { error: { code: 403, message: 'Consignes non autorisees' } });
 
   const cfg = body.generationConfig || {};
   const payload = {
