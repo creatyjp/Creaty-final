@@ -881,6 +881,104 @@ function render() {
   requestAnimationFrame(observe);
 }
 
+// ─── SÉRIES (sous-catégories affichées quand on déplie une section) ───
+// L'ordre compte : la première règle qui correspond l'emporte.
+var SUBS = {
+  'Posters manga': [
+    ['Naruto', /naruto|madara|itachi/i],
+    ['Hunter x Hunter', /hunter x hunter|^gon\b|kurapika/i],
+    ['My Hero Academia', /deku|midoriya|izuku|bakugo|my hero/i],
+    ['Kuroko no Basket', /akashi|kagami|kuroko/i],
+    ['Jujutsu Kaisen', /toji|jujutsu|okkotsu|jjk/i],
+    ['Death Note', /death note|lawliet|\blight\b|yagami/i],
+    ['Frieren', /frieren|ubel|flamme/i],
+    ['Your Name · Suzume · Weathering', /your name|kimi no na|suzume|weathering|sing a bit/i],
+    ['Demon Slayer', /demon slayer|akaza|rengoku|hashira/i],
+    ['Chainsaw Man', /chainsaw/i],
+    ['Bleach', /bleach/i],
+    ['Persona', /persona/i]
+  ],
+  'Musique posters': [
+    ['Billie Eilish', /billie/i],
+    ['Tyler, The Creator', /tyler/i],
+    ['ASAP Rocky', /asap rocky/i],
+    ['PinkPantheress', /pinkpantheress/i],
+    ['Kendrick Lamar', /kendrick/i],
+    ['TV Girl', /tv girl/i],
+    ['SZA · Laufey · Tyla', /sza|laufey|^tyla\b/i],
+    ['The Weeknd · Frank Ocean', /weeknd|frank ocean/i],
+    ['Juice WRLD · XXXTentacion', /juice wrld|xxxtentacion/i],
+    ['Legendes', /michael jackson|2pac|eminem|snoop|gorillaz|arctic/i]
+  ],
+  'Posters football': [
+    ['Lamine Yamal', /yamal/i],
+    ['Kylian Mbappe', /mbapp/i],
+    ['Lionel Messi', /messi/i],
+    ['Cristiano Ronaldo', /\bronaldo\b|cr7/i],
+    ['Neymar', /neymar/i],
+    ['Legendes', /zidane|maldini|beckham|ronaldinho|zlatan|balotelli|legende/i]
+  ],
+  'Posters game': [
+    ['God of War', /god of war|kratos/i],
+    ['The Last of Us', /last of us/i],
+    ['Resident Evil', /resident evil/i],
+    ['Elden Ring · Souls', /elden|dark souls|sekiro/i],
+    ['Ghost of Tsushima', /tsushima/i],
+    ['Sport (FIFA · EA FC · NBA)', /fifa|ea fc|nba/i]
+  ]
+};
+var OTHER = {'Posters manga':'Autres mangas', 'Musique posters':'Autres artistes', 'Posters football':'Autres joueurs', 'Posters game':'Autres jeux'};
+var SUB_INIT = 6;   // posters visibles par série avant « Voir tout »
+var SUBEXP = {};
+
+// Regroupe les posters d'une section par série (ordre des règles, « Autres » à la fin)
+function seriesOf(g, all) {
+  var rules = SUBS[g];
+  if (!rules) return null;
+  var out = rules.map(function(r) { return {name: r[0], items: []}; });
+  var other = {name: OTHER[g] || 'Autres', items: []};
+  all.forEach(function(it) {
+    for (var i = 0; i < rules.length; i++) if (rules[i][1].test(it.name)) { out[i].items.push(it); return; }
+    other.items.push(it);
+  });
+  out.push(other);
+  return out.filter(function(s) { return s.items.length; });
+}
+function subId(g, s) { return 'sub-' + (g + '-' + s).toLowerCase().replace(/[^a-z0-9]+/g, '-'); }
+function toggleSub(key) { SUBEXP[key] = !SUBEXP[key]; render(); }
+function jumpSub(id) {
+  var el = document.getElementById(id);
+  if (el) window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth'});
+}
+
+function buildSeries(g, ac, series) {
+  // Raccourcis vers chaque série (défilement horizontal sur mobile)
+  var chips = '<div class="mb-8 -mx-1 flex gap-2 overflow-x-auto pb-2">';
+  series.forEach(function(s) {
+    chips += '<button type="button" data-id="' + subId(g, s.name) + '" onclick="jumpSub(this.dataset.id)" class="shrink-0 whitespace-nowrap border px-4 py-2 text-[9px] font-bold uppercase tracking-[.15em] transition-all ' + ac.cu + '">'
+      + esc(s.name) + ' <span class="opacity-60">' + s.items.length + '</span></button>';
+  });
+  chips += '</div>';
+  var html = '';
+  series.forEach(function(s) {
+    var key = g + '|' + s.name;
+    var open = SUBEXP[key] || s.items.length <= SUB_INIT;
+    var vis = open ? s.items : s.items.slice(0, SUB_INIT);
+    var cards = '';
+    vis.forEach(function(it) { cards += buildCard(it, g, ac); });
+    var more = s.items.length > SUB_INIT
+      ? '<div class="mt-6 flex justify-center"><button type="button" data-k="' + esc(key) + '" onclick="toggleSub(this.dataset.k)" class="border px-6 py-3 text-[9px] font-bold uppercase tracking-[.2em] transition-all ' + ac.vp + '">'
+        + (SUBEXP[key] ? 'Réduire ' + esc(s.name) : 'Voir tout ' + esc(s.name) + ' (' + s.items.length + ')') + '</button></div>'
+      : '';
+    html += '<div id="' + subId(g, s.name) + '" class="mb-12">'
+      + '<div class="mb-5 flex items-baseline justify-between gap-3 border-b ' + ac.bdr + ' pb-3">'
+      + '<h4 class="fd text-xl font-black uppercase tracking-[-0.03em] ' + ac.h + '">' + esc(s.name) + '</h4>'
+      + '<span class="' + ac.meta + ' shrink-0 text-[9px] font-bold uppercase">' + s.items.length + ' posters</span></div>'
+      + '<div class="' + ac.grid + '">' + cards + '</div>' + more + '</div>';
+  });
+  return chips + html;
+}
+
 function buildSection(g) {
   var cat = DATA[g];
   var ac = A[cat.accent];
@@ -893,9 +991,15 @@ function buildSection(g) {
   var vpTxt = exp ? 'Voir moins' : 'Voir plus (' + hidden + xLbl + ')';
   var waCustom = 'https://wa.me/' + PHONE_CUSTOM + '?text=' + encodeURIComponent(ac.cm);
 
-  var cards = '';
-  for (var i = 0; i < vis.length; i++) {
-    cards += buildCard(vis[i], g, ac);
+  // Section dépliée : posters rangés par série avec un titre chacune
+  var series = exp ? seriesOf(g, all) : null;
+  var body;
+  if (series && series.length > 1) {
+    body = buildSeries(g, ac, series);
+  } else {
+    var cards = '';
+    for (var i = 0; i < vis.length; i++) cards += buildCard(vis[i], g, ac);
+    body = '<div class="' + ac.grid + '">' + cards + '</div>';
   }
 
   var vpBtn = hasMore
@@ -912,7 +1016,7 @@ function buildSection(g) {
     + '<h3 class="fd font-black leading-[.85] tracking-[-0.06em] ' + ac.h + '" style="font-size:clamp(2rem,5vw,3.5rem)">' + g.toUpperCase() + '</h3></div>'
     + '<span class="' + ac.meta + ' text-[9px] font-bold uppercase">' + all.length + ' pieces</span>'
     + '</div>'
-    + '<div class="' + ac.grid + '">' + cards + '</div>'
+    + body
     + '<div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">' + vpBtn + cuBtn + '</div>'
     + '</section>';
 }
@@ -953,6 +1057,7 @@ function toggleExp(g) {
 function setFilter(f) {
   activeFilter = f;
   Object.keys(EXP).forEach(function(k) { delete EXP[k]; });
+  Object.keys(SUBEXP).forEach(function(k) { delete SUBEXP[k]; });
   render();
 }
 
