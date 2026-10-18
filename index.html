@@ -1234,8 +1234,12 @@ function renderWall() {
   img.style.width = Math.round(d[0] * scale) + 'px';
   img.style.height = Math.round(d[1] * scale) + 'px';
   img.style.bottom = Math.round((SOFA_BACK + SOFA_SEAT + HANG_GAP) * scale) + 'px'; // accroché 16 cm au-dessus du dossier
+  // Cadre proportionnel à la taille du poster (~4 % de la largeur), dessiné autour
+  // du poster (content-box) pour ne jamais masquer l'image sur les petits formats.
+  var bw = modalFrame ? Math.min(6, Math.max(2, d[0] * scale * 0.04)) : Math.min(2, Math.max(1, d[0] * scale * 0.015));
+  img.style.boxSizing = 'content-box';
   img.style.borderColor = modalFrame ? '#111' : '#fff';
-  img.style.borderWidth = modalFrame ? '5px' : '2px';
+  img.style.borderWidth = bw.toFixed(1) + 'px';
   document.getElementById('mWallLbl').textContent = wallFmt + ' · ' + d[0] + ' × ' + d[1] + ' cm';
   var chips = '';
   Object.keys(WALL_SIZES).forEach(function(f) {
